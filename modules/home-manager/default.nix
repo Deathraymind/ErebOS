@@ -16,5 +16,6 @@
     ./applications/blueman.nix
     ./applications/network.nix
     ./starship.nix
+    ./niri.nix
   ];
 }
