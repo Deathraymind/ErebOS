@@ -8,6 +8,7 @@
     stylix.url = "github:danth/stylix";
     nvf-custom.url = "github:deathraymind/nvf";
     hyprland.url = "github:hyprwm/Hyprland/";
+    niri.url = "github:sodiboo/niri-flake";
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland"; # This is the magic line

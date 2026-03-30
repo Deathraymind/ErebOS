@@ -1,141 +1,133 @@
 {
-  lib,
+  inputs,
   pkgs,
   config,
-  inputs,
+  lib,
   ...
-}: let
-  cfg = config.axiomos.niri;
-in {
-  options.axiomos.niri = {
-    enable = lib.mkEnableOption "AxiomOS Niri Composite Config";
-  };
+}: {
+  imports = [
+    inputs.niri.homeModules.niri
+  ];
 
-  config = lib.mkIf cfg.enable {
-    # Niri doesn't include these by default, keeping your Hyprland tools
-    home.packages = with pkgs; [
-      kitty
-      wl-color-picker
-      playerctl
-      brightnessctl
-      rofi-wayland # Niri works great with rofi-wayland
-    ];
+  nixpkgs.overlays = [
+    (final: prev: {
+      niri = prev.niri.overrideAttrs (oldAttrs: {
+        doCheck = false;
+      });
+    })
+  ];
 
-    # Using the niri-flake (recommended for the latest features)
-    # Ensure inputs.niri is in your flake.nix
-    programs.niri = {
-      enable = true;
-      package = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri;
+  programs.niri = {
+    enable = true;
+    package = pkgs.niri;
 
-      settings = {
-        # --- INPUT & SENSITIVITY ---
-        input = {
-          keyboard.repeat-delay = 250;
-          keyboard.repeat-rate = 30;
-          touchpad.natural-scroll = true;
-        };
+    settings = {
+      spawn-at-startup = [
+        # This starts the "engine"
+        {command = ["${pkgs.swww}/bin/swww-daemon"];}
 
-        # --- OUTPUTS (Mapped from your Hyprland config) ---
-        outputs = {
-          "DP-1" = {
-            mode = {
-              width = 2560;
-              height = 1440;
-              refresh = 165.0;
-            };
-            position = {
-              x = 0;
-              y = 0;
-            };
+        # This actually paints the picture
+        {
+          command = [
+            "${pkgs.swww}/bin/swww"
+            "img"
+            "/home/deathraymind/AxiomOS/modules/home-manager/hyprland/godhands.jpg"
+          ];
+        }
+      ];
+      # ... rest of your settings
+      input = {
+        keyboard.xkb.layout = "us";
+        focus-follows-mouse.enable = true;
+      };
+
+      outputs = {
+        "DP-1" = {
+          mode = {
+            width = 2560;
+            height = 1440;
+            refresh = 164.998;
           };
-          "HDMI-A-1" = {
-            mode = {
-              width = 1920;
-              height = 1080;
-              refresh = 70.0;
-            };
-            position = {
-              x = -1920;
-              y = 0;
-            };
-          };
-          "eDP-1" = {
-            mode = {
-              width = 1920;
-              height = 1080;
-              refresh = 60.0;
-            };
-            position = {
-              x = 0;
-              y = 0;
-            };
+          position = {
+            x = 0;
+            y = 0;
           };
         };
-
-        # --- LAYOUT & STYLING ---
-        layout = {
-          gaps = 4;
-          default-column-width = {proportion = 0.8;}; # Similar to your mfact = 0.8
-          focus-ring = {
-            enable = true;
-            width = 1;
-            # Pulling from your Stylix/Base16 colors
-            active.color = "rgba(${config.stylix.base16Scheme.base03}ff)";
-            inactive.color = "rgba(${config.stylix.base16Scheme.base01}ff)";
+        "HDMI-A-1" = {
+          mode = {
+            width = 1920;
+            height = 1080;
+            refresh = 70.0;
           };
-          struts = {
-            left = 0;
-            right = 0;
-            top = 0;
-            bottom = 0;
+          position = {
+            x = -1920;
+            y = 0;
           };
         };
+      };
 
-        # --- WINDOW RULES (Kitty Floating/Centered) ---
-        window-rules = [
-          {
-            matches = [{app-id = "^kitty$";}];
-            open-floating = true;
-            default-column-width = {fixed = 800;};
-            default-window-height = {fixed = 600;};
-          }
-        ];
-
-        # --- KEYBINDS (Mapped to your SUPER/CTRL/ALT logic) ---
-        binds = with config.lib.niri.actions; {
-          # Apps & Essentials
-          "Super+A".action = spawn "rofi" "-show" "drun";
-          "Super+P".action = spawn "hypersnip";
-          "Super+Q".action = close-window;
-          "Super+W".action = toggle-window-floating;
-          "Alt+Return".action = maximize-column; # Niri's "fullscreen" is usually column maximize
-          "Super+T".action = spawn "kitty";
-          "Super+I".action = spawn "wl-color-picker";
-
-          # --- COLUMN/WINDOW MOVEMENT (The Niri way) ---
-          "Super+Left".action = focus-column-left;
-          "Super+Right".action = focus-column-right;
-          "Super+H".action = focus-column-left;
-          "Super+L".action = focus-column-right;
-          "Super+K".action = focus-window-or-workspace-up;
-          "Super+J".action = focus-window-or-workspace-down;
-
-          # Moving windows within the "ribbon"
-          "Super+Shift+Ctrl+Left".action = move-column-left;
-          "Super+Shift+Ctrl+Right".action = move-column-right;
-          "Super+Shift+Ctrl+H".action = move-column-left;
-          "Super+Shift+Ctrl+L".action = move-column-right;
-
-          # Workspace Navigation (Niri uses vertical workspaces)
-          "Super+Ctrl+Left".action = focus-workspace-up;
-          "Super+Ctrl+Right".action = focus-workspace-down;
-
-          # Multimedia (bindl equivalent)
-          "XF86AudioPlay".action = spawn "playerctl" "play-pause";
-          "XF86AudioNext".action = spawn "playerctl" "next";
-          "XF86MonBrightnessUp".action = spawn "brightnessctl" "set" "5%+";
-          "XF86AudioRaiseVolume".action = spawn "wpctl" "set-volume" "-l" "1.0" "@DEFAULT_SINK@" "5%+";
+      layout = {
+        gaps = 8;
+        # These match your Hyprland decoration preferences
+        border = {
+          enable = true;
+          width = 1;
+          # Matching your Hyprland col.active_border (base03)
+          active.color = "#${config.stylix.base16Scheme.base03}";
+          # Matching your Hyprland col.inactive_border (base01)
+          inactive.color = "#${config.stylix.base16Scheme.base01}";
         };
+        focus-ring = {
+          enable = true;
+          width = 1;
+          active.color = "#${config.stylix.base16Scheme.base03}";
+          inactive.color = "#${config.stylix.base16Scheme.base01}";
+        };
+      };
+      window-rules = [
+        {
+          # Empty matches means it applies to EVERY window
+          matches = [];
+
+          # This must be a block, not just a number
+          geometry-corner-radius = {
+            top-left = 12.0;
+            top-right = 12.0;
+            bottom-left = 12.0;
+            bottom-right = 12.0;
+          };
+
+          clip-to-geometry = true;
+        }
+      ]; # Window Rules for Kitty (Floating & Size)
+
+      binds = {
+        # --- Overview (Commented out until we find your version's command) ---
+        "Mod+O".action.toggle-overview = [];
+
+        # --- Apps ---
+        "Mod+T".action.spawn = ["kitty"];
+        "Mod+Q".action.close-window = [];
+        "Mod+A".action.spawn = ["rofi" "-show" "drun"];
+        "Mod+P".action.spawn = ["hypersnip"];
+        "Mod+W".action.toggle-window-floating = [];
+        "Mod+I".action.spawn = ["wl-color-picker"];
+
+        # --- Layout Controls ---
+        "Alt+Return".action.maximize-column = [];
+        "Mod+Shift+F".action.fullscreen-window = [];
+
+        # --- Navigation ---
+        "Mod+H".action.focus-column-left = [];
+        "Mod+L".action.focus-column-right = [];
+        "Mod+K".action.focus-window-or-workspace-up = [];
+        "Mod+J".action.focus-window-or-workspace-down = [];
+
+        # --- Media ---
+        "XF86AudioPlay".action.spawn = ["playerctl" "play-pause"];
+        "XF86AudioNext".action.spawn = ["playerctl" "next"];
+        "XF86MonBrightnessUp".action.spawn = ["brightnessctl" "set" "5%+"];
+        "XF86AudioRaiseVolume".action.spawn = ["wpctl" "set-volume" "-l" "1.0" "@DEFAULT_SINK@" "5%+"];
       };
     };
   };

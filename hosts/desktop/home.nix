@@ -13,9 +13,10 @@
   imports = [
     ../../modules/home-manager/default.nix
   ];
-  axiomos.hyprland.enable = false;
+  stylix.enable = true;
+  axiomos.hyprland.enable = true;
   axiomos.hyprspace.enable = false;
-  axiomos.hyprpaper.enable = true;
+  axiomos.hyprpaper.enable = false;
   axiomos.hyprpanel.enable = false;
   axiomos.homeStylix.enable = true;
   axiomos.waybar.enable = true;

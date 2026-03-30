@@ -87,7 +87,6 @@
 
   ## Home Manager Import ##
   axiomos.steam.enable = true;
-  axiomos.niri.enable = true;
   axiomos.stylix = {
     enable = true;
     theme = "oxocarbon-dark";
