@@ -17,5 +17,6 @@
     ./applications/network.nix
     ./starship.nix
     ./niri.nix
+    ./noctalia.nix
   ];
 }

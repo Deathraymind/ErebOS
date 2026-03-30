@@ -2,6 +2,10 @@
   description = "A very basic flake";
   # this is ErbOS
   inputs = {
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # Official Plugins Flake - forced to follow your Hyprland version
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable"; # for cachy kernal
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-25.11";
