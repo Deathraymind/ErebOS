@@ -7,5 +7,6 @@
     ./applications/screenshot.nix
     ./cachy.nix
     ./autologin.nix
+    ./niri.nix
   ];
 }

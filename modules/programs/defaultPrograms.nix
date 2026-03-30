@@ -12,5 +12,7 @@
     gnome-disk-utility
     nautilus
     obs-studio
+    python3
+    arduino-ide
   ];
 }

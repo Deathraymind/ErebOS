@@ -13,7 +13,7 @@
   imports = [
     ../../modules/home-manager/default.nix
   ];
-  axiomos.hyprland.enable = true;
+  axiomos.hyprland.enable = false;
   axiomos.hyprspace.enable = false;
   axiomos.hyprpaper.enable = true;
   axiomos.hyprpanel.enable = false;
