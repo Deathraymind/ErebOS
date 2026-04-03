@@ -1,133 +1,153 @@
 {
-  inputs,
-  pkgs,
   config,
+  pkgs,
   lib,
+  inputs,
   ...
-}: {
+}: let
+  cfg = config.axiomos.homeNiri;
+in {
   imports = [
     inputs.niri.homeModules.niri
   ];
 
-  nixpkgs.overlays = [
-    (final: prev: {
-      niri = prev.niri.overrideAttrs (oldAttrs: {
-        doCheck = false;
-      });
-    })
-  ];
+  ### 1. Define the "Switch"
+  options.axiomos.homeNiri = {
+    enable = lib.mkEnableOption "AxiomOS Niri Compositor Configuration";
+  };
 
-  programs.niri = {
-    enable = true;
-    package = pkgs.niri;
+  ### 2. The Logic
+  config = lib.mkIf cfg.enable {
+    # Import the Niri flake module only when enabled
+    home.packages = with pkgs; [
+      xwayland-satellite
+    ];
+    # Apply the check override
+    nixpkgs.overlays = [
+      (final: prev: {
+        niri = prev.niri.overrideAttrs (oldAttrs: {
+          doCheck = false;
+        });
+      })
+    ];
 
-    settings = {
-      spawn-at-startup = [
-        # This starts the "engine"
-        {command = ["${pkgs.swww}/bin/swww-daemon"];}
+    programs.niri = {
+      enable = true;
+      package = pkgs.niri;
 
-        # This actually paints the picture
-        {
-          command = [
-            "${pkgs.swww}/bin/swww"
-            "img"
-            "/home/deathraymind/AxiomOS/modules/home-manager/hyprland/godhands.jpg"
-          ];
-        }
-      ];
-      # ... rest of your settings
-      input = {
-        keyboard.xkb.layout = "us";
-        focus-follows-mouse.enable = true;
-      };
+      settings = {
+        spawn-at-startup = [
+          {command = ["${pkgs.swww}/bin/swww-daemon"];}
+          {command = ["noctalia-shell"];}
+          {
+            command = [
+              "${pkgs.swww}/bin/swww"
+              "img"
+              "/home/deathraymind/AxiomOS/modules/home-manager/hyprland/godhands.jpg"
+            ];
+          }
+        ];
 
-      outputs = {
-        "DP-1" = {
-          mode = {
-            width = 2560;
-            height = 1440;
-            refresh = 164.998;
+        input = {
+          keyboard.xkb.layout = "us";
+
+          focus-follows-mouse = {
+            enable = true;
+            # This is the "Goldilocks" setting.
+            # "10%" means it only peeks at the next window instead of
+            # yeeting your whole view instantly.
+            # Set to "0%" to completely stop edge-scrolling while
+            # keeping mouse-focus enabled.
+            max-scroll-amount = "10%";
           };
-          position = {
-            x = 0;
-            y = 0;
+
+          # To prevent accidental 'warping' when you switch windows:
+          warp-mouse-to-focus = true;
+        };
+
+        outputs = {
+          "DP-1" = {
+            mode = {
+              width = 2560;
+              height = 1440;
+              refresh = 164.998;
+            };
+            position = {
+              x = 0;
+              y = 0;
+            };
+          };
+          "HDMI-A-1" = {
+            mode = {
+              width = 1920;
+              height = 1080;
+              refresh = 70.0;
+            };
+            position = {
+              x = -1920;
+              y = 0;
+            };
           };
         };
-        "HDMI-A-1" = {
-          mode = {
-            width = 1920;
-            height = 1080;
-            refresh = 70.0;
+
+        layout = {
+          gaps = 12;
+          struts = {
+            left = 12;
+            right = 12;
+            top = 12;
+            bottom = 12;
           };
-          position = {
-            x = -1920;
-            y = 0;
+          border = {
+            enable = true;
+            width = 1;
+            active.color = "#${config.lib.stylix.colors.base03}"; # Note: used config.lib.stylix for safety
+            inactive.color = "#${config.lib.stylix.colors.base01}";
+          };
+          focus-ring = {
+            enable = true;
+            width = 1;
+            active.color = "#${config.lib.stylix.colors.base03}";
+            inactive.color = "#${config.lib.stylix.colors.base01}";
           };
         };
-      };
 
-      layout = {
-        gaps = 8;
-        # These match your Hyprland decoration preferences
-        border = {
-          enable = true;
-          width = 1;
-          # Matching your Hyprland col.active_border (base03)
-          active.color = "#${config.stylix.base16Scheme.base03}";
-          # Matching your Hyprland col.inactive_border (base01)
-          inactive.color = "#${config.stylix.base16Scheme.base01}";
+        window-rules = [
+          {
+            matches = []; # Empty matches applies to all windows
+            draw-border-with-background = false;
+          }
+          {
+            matches = [];
+            geometry-corner-radius = {
+              top-left = 12.0;
+              top-right = 12.0;
+              bottom-left = 12.0;
+              bottom-right = 12.0;
+            };
+            clip-to-geometry = true;
+          }
+        ];
+
+        binds = {
+          "Mod+O".action.toggle-overview = [];
+          "Mod+T".action.spawn = ["kitty"];
+          "Mod+Q".action.close-window = [];
+          "Mod+A".action.spawn = ["rofi" "-show" "drun"];
+          "Mod+P".action.spawn = ["hypersnip"];
+          "Mod+W".action.toggle-window-floating = [];
+          "Mod+I".action.spawn = ["wl-color-picker"];
+          "Alt+Return".action.maximize-column = [];
+          "Mod+Shift+F".action.fullscreen-window = [];
+          "Mod+H".action.focus-column-left = [];
+          "Mod+L".action.focus-column-right = [];
+          "Mod+K".action.focus-window-or-workspace-up = [];
+          "Mod+J".action.focus-window-or-workspace-down = [];
+          "XF86AudioPlay".action.spawn = ["playerctl" "play-pause"];
+          "XF86AudioNext".action.spawn = ["playerctl" "next"];
+          "XF86MonBrightnessUp".action.spawn = ["brightnessctl" "set" "5%+"];
+          "XF86AudioRaiseVolume".action.spawn = ["wpctl" "set-volume" "-l" "1.0" "@DEFAULT_SINK@" "5%+"];
         };
-        focus-ring = {
-          enable = true;
-          width = 1;
-          active.color = "#${config.stylix.base16Scheme.base03}";
-          inactive.color = "#${config.stylix.base16Scheme.base01}";
-        };
-      };
-      window-rules = [
-        {
-          # Empty matches means it applies to EVERY window
-          matches = [];
-
-          # This must be a block, not just a number
-          geometry-corner-radius = {
-            top-left = 12.0;
-            top-right = 12.0;
-            bottom-left = 12.0;
-            bottom-right = 12.0;
-          };
-
-          clip-to-geometry = true;
-        }
-      ]; # Window Rules for Kitty (Floating & Size)
-
-      binds = {
-        # --- Overview (Commented out until we find your version's command) ---
-        "Mod+O".action.toggle-overview = [];
-
-        # --- Apps ---
-        "Mod+T".action.spawn = ["kitty"];
-        "Mod+Q".action.close-window = [];
-        "Mod+A".action.spawn = ["rofi" "-show" "drun"];
-        "Mod+P".action.spawn = ["hypersnip"];
-        "Mod+W".action.toggle-window-floating = [];
-        "Mod+I".action.spawn = ["wl-color-picker"];
-
-        # --- Layout Controls ---
-        "Alt+Return".action.maximize-column = [];
-        "Mod+Shift+F".action.fullscreen-window = [];
-
-        # --- Navigation ---
-        "Mod+H".action.focus-column-left = [];
-        "Mod+L".action.focus-column-right = [];
-        "Mod+K".action.focus-window-or-workspace-up = [];
-        "Mod+J".action.focus-window-or-workspace-down = [];
-
-        # --- Media ---
-        "XF86AudioPlay".action.spawn = ["playerctl" "play-pause"];
-        "XF86AudioNext".action.spawn = ["playerctl" "next"];
-        "XF86MonBrightnessUp".action.spawn = ["brightnessctl" "set" "5%+"];
-        "XF86AudioRaiseVolume".action.spawn = ["wpctl" "set-volume" "-l" "1.0" "@DEFAULT_SINK@" "5%+"];
       };
     };
   };

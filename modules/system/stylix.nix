@@ -55,6 +55,12 @@ in {
       base16Scheme = themes.${cfg.theme};
       enable = true;
       polarity = "dark";
+      opacity = {
+        terminal = 1.0; # Adjust this value (0.0 to 1.0)
+        applications = 1.0;
+        popups = 1.0;
+        desktop = 1.0;
+      };
 
       cursor = {
         package = pkgs.bibata-cursors;

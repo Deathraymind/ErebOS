@@ -15,6 +15,8 @@
   ];
   stylix.enable = true;
   axiomos.hyprland.enable = true;
+  axiomos.homeNiri.enable = true;
+  axiomos.homeNoctalia.enable = true;
   axiomos.hyprspace.enable = false;
   axiomos.hyprpaper.enable = false;
   axiomos.hyprpanel.enable = false;

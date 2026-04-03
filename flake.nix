@@ -8,6 +8,7 @@
     };
     # Official Plugins Flake - forced to follow your Hyprland version
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable"; # for cachy kernal
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-25.11";
     stylix.url = "github:danth/stylix";
     nvf-custom.url = "github:deathraymind/nvf";
@@ -33,6 +34,8 @@
     self,
     nixpkgs,
     chaotic,
+    noctalia,
+    nixpkgs-unstable,
     ...
   } @ inputs: {
     nixosConfigurations.desktop = nixpkgs.lib.nixosSystem {
