@@ -28,7 +28,7 @@
   axiomos.zsh.enable = true;
   axiomos.kitty.enable = true;
   axiomos.rofi.enable = true;
-  axiomos.starship.enable = true;
+  axiomos.starship.enable = false;
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;

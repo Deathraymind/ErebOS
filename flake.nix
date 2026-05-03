@@ -8,6 +8,7 @@
     };
     # Official Plugins Flake - forced to follow your Hyprland version
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable"; # for cachy kernal
+    openclaw.url = "github:openclaw/nix-openclaw";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-25.11";
     stylix.url = "github:danth/stylix";
@@ -36,10 +37,24 @@
     chaotic,
     noctalia,
     nixpkgs-unstable,
+    openclaw,
     ...
-  } @ inputs: {
+  } @ inputs: let
+    # 1. Define the ROCm-specific unstable package here
+    system = "x86_64-linux";
+    unstable-pkgs = import nixpkgs-unstable {
+      inherit system;
+      config.allowUnfree = true;
+    };
+    # Specifically grab the ROCm-precompiled version
+    ollama-unstable-rocm = unstable-pkgs.ollama-rocm;
+  in {
     nixosConfigurations.desktop = nixpkgs.lib.nixosSystem {
-      specialArgs = {inherit inputs;};
+      # 2. Add 'ollama-unstable-rocm' to specialArgs so configuration.nix can use it
+      specialArgs = {
+        inherit inputs;
+        ollama-fix = ollama-unstable-rocm;
+      };
       modules = [
         ./hosts/desktop/configuration.nix
         ./modules/system/default.nix
@@ -50,34 +65,11 @@
         {
           home-manager = {
             extraSpecialArgs = {inherit inputs;};
-            users.deathraymind.imports = [
-              ./hosts/desktop/home.nix
-            ];
+            users.deathraymind.imports = [./hosts/desktop/home.nix];
           };
         }
       ];
     };
-
-    nixosConfigurations.laptop = nixpkgs.lib.nixosSystem {
-      specialArgs = {inherit inputs;};
-      modules = [
-        ./hosts/laptop/configuration.nix
-        ./modules/system/default.nix
-        ./modules/programs/defaultPrograms.nix
-        inputs.home-manager.nixosModules.default
-        inputs.stylix.nixosModules.stylix
-        chaotic.nixosModules.default
-        {
-          home-manager = {
-            extraSpecialArgs = {inherit inputs;};
-            users.deathraymind.imports = [
-              ./hosts/laptop/home.nix
-            ];
-          };
-        }
-      ];
-    };
-
     nixosConfigurations.vm = nixpkgs.lib.nixosSystem {
       specialArgs = {inherit inputs;};
       modules = [

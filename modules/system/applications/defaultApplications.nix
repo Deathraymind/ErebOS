@@ -15,13 +15,37 @@
     enable = true;
     package = pkgs.valent;
   };
+  programs.appimage = {
+    enable = true;
+    binfmt = true;
+  };
+  xdg.portal = {
+    enable = true;
+    # Niri officially supports xdg-desktop-portal-gnome for screencasting
+    extraPortals = [
+      pkgs.xdg-desktop-portal-gnome
+      pkgs.xdg-desktop-portal-gtk
+    ];
+    config = {
+      common.default = ["gnome" "gtk"];
+      # You can be specific for screencasting if needed:
+      # "org.freedesktop.impl.portal.ScreenCast" = "gnome";
+    };
+  };
+  services.flatpak.enable = true;
   ### 2. The Logic
   environment.systemPackages = [
+    pkgs.ferium
+    pkgs.android-tools
+    pkgs.obsidian
     pkgs.virt-manager
     pkgs.qemu
     pkgs.libvirt
     pkgs.ffmpeg-full
     pkgs.yazi
+    pkgs.devbox
+    pkgs.nodejs
+    pkgs.vesktop
   ];
   nixpkgs.config.allowUnfreePredicate = pkg:
     builtins.elem (lib.getName pkg) [

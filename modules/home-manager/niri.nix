@@ -21,7 +21,14 @@ in {
     # Import the Niri flake module only when enabled
     home.packages = with pkgs; [
       xwayland-satellite
+      xdg-desktop-portal-gtk
+      xdg-desktop-portal-gnome
     ];
+    home.sessionVariables = {
+      XDG_CURRENT_DESKTOP = "niri";
+      XDG_SESSION_DESKTOP = "niri";
+      NIXOS_OZONE_WL = "1";
+    };
     # Apply the check override
     nixpkgs.overlays = [
       (final: prev: {
@@ -30,13 +37,54 @@ in {
         });
       })
     ];
+    xdg.portal = {
+      enable = true;
+      extraPortals = [
+        pkgs.xdg-desktop-portal-gtk
+        pkgs.xdg-desktop-portal-gnome
+      ];
+      config = {
+        common = {
+          default = ["gtk"];
+        };
+        # This specifically stops GNOME apps from waiting for gnome-shell
+        niri = {
+          default = ["gnome" "gtk"];
+        };
+      };
+    };
 
     programs.niri = {
       enable = true;
       package = pkgs.niri;
 
       settings = {
+        prefer-no-csd = true;
         spawn-at-startup = [
+          {command = ["xwayland-satellite"];} # Add this line
+          {
+            command = [
+              "${pkgs.dbus}/bin/dbus-update-activation-environment"
+              "--systemd"
+              "DISPLAY"
+              "WAYLAND_DISPLAY"
+              "XDG_CURRENT_DESKTOP"
+              "XDG_SESSION_DESKTOP"
+            ];
+          }
+          {
+            # This block is the "magic" for screencasting
+            command = [
+              "sh"
+              "-c"
+              ''
+                ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=niri XDG_SESSION_DESKTOP=niri
+                          
+                systemctl --user stop xdg-desktop-portal xdg-desktop-portal-gnome xdg-desktop-portal-gtk
+                          
+                systemctl --user start xdg-desktop-portal-gnome xdg-desktop-portal-gtk              ''
+            ];
+          }
           {command = ["${pkgs.swww}/bin/swww-daemon"];}
           {command = ["noctalia-shell"];}
           {
@@ -118,6 +166,16 @@ in {
             draw-border-with-background = false;
           }
           {
+            # An empty matches list applies this to all new windows
+            matches = [];
+
+            # This sets the initial width to 80% of the output's width
+            default-column-width = {proportion = 0.8;};
+
+            # Optional: If you want to ensure it doesn't open too small or too large
+            # you can also set specific bounds here.
+          }
+          {
             matches = [];
             geometry-corner-radius = {
               top-left = 12.0;
@@ -130,6 +188,17 @@ in {
         ];
 
         binds = {
+          # Move columns/windows (The "Shift" actions you requested)
+          "Mod+Shift+H".action.move-column-left = [];
+          "Mod+Shift+L".action.move-column-right = [];
+
+          # Moving "Up" or "Down" moves the window/column to the workspace above or below
+          "Mod+Shift+K".action.move-window-up-or-to-workspace-up = [];
+          "Mod+Shift+J".action.move-window-down-or-to-workspace-down = [];
+
+          # Optional: Consume or Expel windows from a column
+          "Mod+BracketLeft".action.consume-or-expel-window-left = [];
+          "Mod+BracketRight".action.consume-or-expel-window-right = [];
           "Mod+O".action.toggle-overview = [];
           "Mod+T".action.spawn = ["kitty"];
           "Mod+Q".action.close-window = [];
