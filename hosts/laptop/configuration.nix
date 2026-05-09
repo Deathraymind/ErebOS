@@ -4,7 +4,14 @@
   pkgs,
   inputs,
   ...
-}: {
+}: let
+  # This tells Nix to use the unstable branch for this specific variable
+  unstable = import inputs.nixpkgs-unstable {
+    system = "x86_64-linux"; # Standard for most PCs
+    config.allowUnfree = true;
+  };
+in {
+  # ... your existing config ...{
   imports = [
     ./hardware-configuration.nix
   ];
@@ -16,6 +23,11 @@
     pkgs.hyprshot
   ];
   services.udisks2.enable = true;
+  services.gvfs.enable = true;
+  # for ollamprograms.adb.enable = true;a
+  programs.adb.enable = true;
+
+  systemd.services.NetworkManager-wait-online.enable = false;
 
   # Kill that xrdb error once and for all
   # We still enable the module so Nix knows how to handle the manual/docs
@@ -39,7 +51,6 @@
       efiSysMountPoint = "/boot";
     };
   };
-  security.polkit.enable = true;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -80,11 +91,16 @@
     shell = pkgs.zsh;
     hashedPassword = "$y$j9T$Yu6LVySFa46PsKBHC7lkI.$fCdSJMULL1L2uOMhiY1WlR5QzW84qP42ktl2CxvSkgC";
     isNormalUser = true;
-    extraGroups = ["dialout" "networkmanager" "wheel" "libvirtd" "vboxusers" "disk" "kvm" "video" "render" "docker" "adbusers" "ydotool" "uinput"];
+    extraGroups = ["dialout" "networkmanager" "wheel" "libvirtd" "vboxusers" "disk" "kvm" "video" "render" "docker" "adbusers" "ydotool" "uinput" "amdgpu"];
 
     packages = with pkgs; [
     ];
   };
+  # Make sure amdgpu is available from early boot and in the live system
+  boot.initrd.kernelModules = ["amdgpu"];
+  boot.kernelModules = ["amdgpu"];
+
+  # You need access to /dev/kfd and /dev/dri/*
 
   ## Home Manager Import ##
   axiomos.steam.enable = true;
@@ -101,4 +117,7 @@
   services.upower.enable = true; # Needed for battery status
 
   system.stateVersion = "25.05";
+
+  # 1. Enable dconf (Required for the GNOME portal to function)
+  programs.dconf.enable = true;
 }

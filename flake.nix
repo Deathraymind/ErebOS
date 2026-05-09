@@ -70,6 +70,28 @@
         }
       ];
     };
+    nixosConfigurations.laptop = nixpkgs.lib.nixosSystem {
+      # 2. Add 'ollama-unstable-rocm' to specialArgs so configuration.nix can use it
+      specialArgs = {
+        inherit inputs;
+        ollama-fix = ollama-unstable-rocm;
+      };
+      modules = [
+        ./hosts/laptop/configuration.nix
+        ./modules/system/default.nix
+        ./modules/programs/defaultPrograms.nix
+        inputs.home-manager.nixosModules.default
+        inputs.stylix.nixosModules.stylix
+        chaotic.nixosModules.default
+        {
+          home-manager = {
+            extraSpecialArgs = {inherit inputs;};
+            users.deathraymind.imports = [./hosts/laptop/home.nix];
+          };
+        }
+      ];
+    };
+
     nixosConfigurations.vm = nixpkgs.lib.nixosSystem {
       specialArgs = {inherit inputs;};
       modules = [
