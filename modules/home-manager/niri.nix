@@ -79,9 +79,9 @@ in {
               "-c"
               ''
                 ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=niri XDG_SESSION_DESKTOP=niri
-                          
+                    
                 systemctl --user stop xdg-desktop-portal xdg-desktop-portal-gnome xdg-desktop-portal-gtk
-                          
+                    
                 systemctl --user start xdg-desktop-portal-gnome xdg-desktop-portal-gtk              ''
             ];
           }
@@ -97,6 +97,12 @@ in {
         ];
 
         input = {
+          mouse = {
+            accel-profile = "flat";
+            # Optional: set a static speed (ranges from -1.0 to 1.0)
+            # accel-speed = 0.0;
+          };
+
           keyboard.xkb.layout = "us";
 
           focus-follows-mouse = {
