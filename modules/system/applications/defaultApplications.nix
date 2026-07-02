@@ -6,9 +6,10 @@
   inputs,
   ...
 }: {
+  services.twingate.enable = true;
   # Enable libvirtd daemon
   virtualisation.libvirtd.enable = true;
-
+  #  services.expressvpn.enable = true;
   # Install virt-manager
   programs.virt-manager.enable = true;
   programs.kdeconnect = {
@@ -33,11 +34,12 @@
     };
   };
   services.flatpak.enable = true;
+  nixpkgs.config.allowUnfree = true;
   ### 2. The Logic
   environment.systemPackages = [
+    # pkgs.expressvpn
     pkgs.ferium
     pkgs.android-tools
-    pkgs.obsidian
     pkgs.virt-manager
     pkgs.qemu
     pkgs.libvirt

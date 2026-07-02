@@ -22,17 +22,15 @@ in {
       pkgs.adwsteamgtk
       pkgs.prismlauncher
       pkgs.unityhub
-      pkgs.discord
     ];
     nixpkgs.config.allowUnfreePredicate = pkg:
       builtins.elem (lib.getName pkg) [
         "steam"
         "steam-unwrapped"
-        "discord"
         "unityhub"
         "corefonts"
       ];
-
+    hardware.steam-hardware.enable = true;
     programs.steam = {
       enable = true;
     };

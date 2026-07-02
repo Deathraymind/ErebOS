@@ -14,7 +14,7 @@
     ../../modules/home-manager/default.nix
   ];
   stylix.enable = true;
-  axiomos.hyprland.enable = true;
+  axiomos.hyprland.enable = false;
   axiomos.homeNiri.enable = true;
   axiomos.homeNoctalia.enable = true;
   axiomos.hyprspace.enable = false;

@@ -7,6 +7,6 @@
     ./applications/screenshot.nix
     ./cachy.nix
     ./autologin.nix
-    ./ollama.nix
+    # ./ollama.nix
   ];
 }

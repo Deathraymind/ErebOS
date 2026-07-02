@@ -37,8 +37,9 @@ in {
   # Disable it so your fork's Catppuccin theme actually shows up.
 
   boot.loader = {
+    systemd-boot.enable = true;
     grub = {
-      enable = lib.mkForce true;
+      enable = lib.mkForce false;
       efiSupport = true;
       devices = ["nodev"];
       configurationName = "BowOS";

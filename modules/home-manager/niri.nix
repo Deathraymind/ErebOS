@@ -59,7 +59,7 @@ in {
       package = pkgs.niri;
 
       settings = {
-        prefer-no-csd = true;
+        prefer-no-csd = false;
         spawn-at-startup = [
           {command = ["xwayland-satellite"];} # Add this line
           {
@@ -79,9 +79,9 @@ in {
               "-c"
               ''
                 ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=niri XDG_SESSION_DESKTOP=niri
-                    
+                          
                 systemctl --user stop xdg-desktop-portal xdg-desktop-portal-gnome xdg-desktop-portal-gtk
-                    
+                          
                 systemctl --user start xdg-desktop-portal-gnome xdg-desktop-portal-gtk              ''
             ];
           }
@@ -120,7 +120,24 @@ in {
         };
 
         outputs = {
-          "DP-1" = {
+          "HDMI-A-1" = {
+            scale = 1.5;
+            mode = {
+              width = 3840;
+              height = 2160;
+              refresh = 59.997;
+            };
+            transform = {
+              rotation = 180;
+              flipped = false;
+            };
+            position = {
+              x = 0;
+              y = 0;
+            }; # top monitor
+          };
+
+          "DP-2" = {
             mode = {
               width = 2560;
               height = 1440;
@@ -128,18 +145,23 @@ in {
             };
             position = {
               x = 0;
-              y = 0;
-            };
+              y = 1440;
+            }; # below DP-2
           };
-          "HDMI-A-1" = {
+          "HDMI-A" = {
             mode = {
               width = 1920;
               height = 1080;
               refresh = 70.0;
             };
+            transform = {
+              rotation = 90;
+              flipped = false;
+            };
+
             position = {
-              x = -1920;
-              y = 0;
+              x = -1080;
+              y = 1000;
             };
           };
         };

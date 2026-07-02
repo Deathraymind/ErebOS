@@ -21,6 +21,7 @@ in {
     inputs.nvf-custom.packages.${pkgs.system}.default
     pkgs.hyprpaper
     pkgs.hyprshot
+    pkgs.sbctl
   ];
   services.udisks2.enable = true;
   services.gvfs.enable = true;
@@ -28,17 +29,21 @@ in {
   programs.adb.enable = true;
 
   systemd.services.NetworkManager-wait-online.enable = false;
-
+  boot.lanzaboote = {
+    enable = true;
+    pkiBundle = "/var/lib/sbctl";
+  };
   # Kill that xrdb error once and for all
   # We still enable the module so Nix knows how to handle the manual/docs
   # but we don't need to define 'settings' if you just want the fork's defaults.
 
   # IMPORTANT: Stylix usually kills custom Neovim themes.
   # Disable it so your fork's Catppuccin theme actually shows up.
-
+  virtualisation.docker.enable = true;
+  boot.loader.systemd-boot.enable = false;
   boot.loader = {
     grub = {
-      enable = lib.mkForce true;
+      enable = lib.mkForce false;
       efiSupport = true;
       devices = ["nodev"];
       configurationName = "BowOS";
@@ -61,13 +66,11 @@ in {
     wireplumber.enable = true;
   };
 
-  boot.loader.systemd-boot.enable = false;
-
   nix.settings.experimental-features = ["nix-command" "flakes"];
-  # Use the systemd-boot EFI boot loader.
 
   networking.hostName = "AxiomOS";
   networking.networkmanager.enable = true;
+  networking.networkmanager.plugins = [pkgs.networkmanager-openvpn];
 
   time.timeZone = "Asia/Tokyo";
 
@@ -91,7 +94,7 @@ in {
     shell = pkgs.zsh;
     hashedPassword = "$y$j9T$Yu6LVySFa46PsKBHC7lkI.$fCdSJMULL1L2uOMhiY1WlR5QzW84qP42ktl2CxvSkgC";
     isNormalUser = true;
-    extraGroups = ["dialout" "networkmanager" "wheel" "libvirtd" "vboxusers" "disk" "kvm" "video" "render" "docker" "adbusers" "ydotool" "uinput" "amdgpu"];
+    extraGroups = ["docker" "dialout" "networkmanager" "wheel" "libvirtd" "vboxusers" "disk" "kvm" "video" "render" "docker" "adbusers" "ydotool" "uinput" "amdgpu"];
 
     packages = with pkgs; [
     ];
