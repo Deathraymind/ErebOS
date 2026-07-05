@@ -97,20 +97,5 @@
         }
       ];
     };
-
-    nixosConfigurations.vm = nixpkgs.lib.nixosSystem {
-      specialArgs = {inherit inputs;};
-      modules = [
-        ./hosts/vm/configuration.nix
-        ./modules/system/default.nix
-        inputs.home-manager.nixosModules.default
-        {
-          home-manager = {
-            extraSpecialArgs = {inherit inputs;};
-            users.deathraymind = import ./hosts/vm/home.nix;
-          };
-        }
-      ];
-    };
   };
 }

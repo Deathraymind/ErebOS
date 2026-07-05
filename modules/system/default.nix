@@ -1,4 +1,8 @@
-{...}: {
+{
+  config,
+  pkgs,
+  ...
+}: {
   imports = [
     ./desktop-logic.nix
     ./steam.nix

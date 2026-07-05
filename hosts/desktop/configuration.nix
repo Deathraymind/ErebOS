@@ -22,17 +22,17 @@ in {
     pkgs.hyprpaper
     pkgs.hyprshot
     pkgs.sbctl
+    pkgs.nfs-utils
   ];
   services.udisks2.enable = true;
   services.gvfs.enable = true;
+  services.samba-wsdd.enable = true;
+
+  boot.supportedFilesystems = ["nfs"];
   # for ollamprograms.adb.enable = true;a
   programs.adb.enable = true;
 
   systemd.services.NetworkManager-wait-online.enable = false;
-  boot.lanzaboote = {
-    enable = true;
-    pkiBundle = "/var/lib/sbctl";
-  };
   # Kill that xrdb error once and for all
   # We still enable the module so Nix knows how to handle the manual/docs
   # but we don't need to define 'settings' if you just want the fork's defaults.
@@ -40,7 +40,7 @@ in {
   # IMPORTANT: Stylix usually kills custom Neovim themes.
   # Disable it so your fork's Catppuccin theme actually shows up.
   virtualisation.docker.enable = true;
-  boot.loader.systemd-boot.enable = false;
+  boot.loader.systemd-boot.enable = true;
   boot.loader = {
     grub = {
       enable = lib.mkForce false;
