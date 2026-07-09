@@ -1,12 +1,12 @@
 {lib, config, inputs, ...}:
 let
- cfg = config.axiomos.git;  
+ cfg = config.ErebOS.git;  
 in 
 {
 
  ### 1. Define the "Switch"
-  options.axiomos.git= {
-    enable = lib.mkEnableOption "AxiomOS git Configuration";
+  options.ErebOS.git= {
+    enable = lib.mkEnableOption "ErebOS git Configuration";
   };
 
   ### 2. The Logic

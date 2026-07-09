@@ -16,7 +16,7 @@ in {
     ./hardware-configuration.nix
   ];
   environment.systemPackages = [
-    # This pulls the exact 'AxiomOS' package you were running
+    # This pulls the exact 'ErebOS' package you were running
     # and installs it as 'nvim' on your system path.
     inputs.nvf-custom.packages.${pkgs.system}.default
     pkgs.hyprpaper
@@ -39,6 +39,11 @@ in {
 
   # IMPORTANT: Stylix usually kills custom Neovim themes.
   # Disable it so your fork's Catppuccin theme actually shows up.
+  # for just cause 4
+  networking.extraHosts = ''
+    127.0.0.1 square-enix.com
+    127.0.0.1 www.square-enix.com
+  '';
   virtualisation.docker.enable = true;
   boot.loader.systemd-boot.enable = true;
   boot.loader = {
@@ -68,7 +73,7 @@ in {
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
-  networking.hostName = "AxiomOS";
+  networking.hostName = "ErebOS";
   networking.networkmanager.enable = true;
   networking.networkmanager.plugins = [pkgs.networkmanager-openvpn];
 
@@ -106,15 +111,15 @@ in {
   # You need access to /dev/kfd and /dev/dri/*
 
   ## Home Manager Import ##
-  axiomos.steam.enable = true;
-  axiomos.stylix = {
+  ErebOS.steam.enable = true;
+  ErebOS.stylix = {
     enable = true;
     theme = "oxocarbon-dark";
   };
 
   services.openssh.enable = true;
-  axiomos.cachy.enable = true;
-  axiomos.autologin.enable = true;
+  ErebOS.cachy.enable = true;
+  ErebOS.autologin.enable = true;
 
   hardware.bluetooth.enable = true;
   services.upower.enable = true; # Needed for battery status
@@ -122,5 +127,11 @@ in {
   system.stateVersion = "25.05";
 
   # 1. Enable dconf (Required for the GNOME portal to function)
+  programs.gamemode.enable = true;
   programs.dconf.enable = true;
+  fileSystems."/mnt/data" = {
+    device = "192.168.1.100:/srv/share";
+    fsType = "nfs";
+    options = ["x-systemd.automount" "noauto" "x-systemd.idle-timeout=600"];
+  };
 }

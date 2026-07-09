@@ -6,22 +6,22 @@
   inputs,
   ...
 }: let
-  cfg = config.axiomos.steam;
+  cfg = config.ErebOS.steam;
 in {
   imports = [
   ];
 
   ### 1. Define the "Switch"
-  options.axiomos.steam = {
-    enable = lib.mkEnableOption "AxiomOS steam Configuration";
+  options.ErebOS.steam = {
+    enable = lib.mkEnableOption "ErebOS steam Configuration";
   };
-
   ### 2. The Logic
   config = lib.mkIf cfg.enable {
     environment.systemPackages = [
       pkgs.adwsteamgtk
       pkgs.prismlauncher
       pkgs.unityhub
+      pkgs.protonup-qt
     ];
     nixpkgs.config.allowUnfreePredicate = pkg:
       builtins.elem (lib.getName pkg) [
@@ -33,6 +33,9 @@ in {
     hardware.steam-hardware.enable = true;
     programs.steam = {
       enable = true;
+      extraCompatPackages = with pkgs; [
+        proton-ge-bin
+      ];
     };
   };
 }

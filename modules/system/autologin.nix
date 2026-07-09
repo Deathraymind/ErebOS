@@ -4,11 +4,11 @@
   config,
   ...
 }: let
-  cfg = config.axiomos.autologin;
+  cfg = config.ErebOS.autologin;
 in {
   ### 1. Define the "Switch"
-  options.axiomos.autologin = {
-    enable = lib.mkEnableOption "AxiomOS autologin Configuration";
+  options.ErebOS.autologin = {
+    enable = lib.mkEnableOption "ErebOS autologin Configuration";
   };
 
   ### 2. The Logic

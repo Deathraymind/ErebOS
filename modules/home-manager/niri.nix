@@ -5,15 +5,15 @@
   inputs,
   ...
 }: let
-  cfg = config.axiomos.homeNiri;
+  cfg = config.ErebOS.homeNiri;
 in {
   imports = [
     inputs.niri.homeModules.niri
   ];
 
   ### 1. Define the "Switch"
-  options.axiomos.homeNiri = {
-    enable = lib.mkEnableOption "AxiomOS Niri Compositor Configuration";
+  options.ErebOS.homeNiri = {
+    enable = lib.mkEnableOption "ErebOS Niri Compositor Configuration";
   };
 
   ### 2. The Logic
@@ -79,9 +79,9 @@ in {
               "-c"
               ''
                 ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=niri XDG_SESSION_DESKTOP=niri
-                          
+                              
                 systemctl --user stop xdg-desktop-portal xdg-desktop-portal-gnome xdg-desktop-portal-gtk
-                          
+                              
                 systemctl --user start xdg-desktop-portal-gnome xdg-desktop-portal-gtk              ''
             ];
           }
@@ -91,7 +91,7 @@ in {
             command = [
               "${pkgs.swww}/bin/swww"
               "img"
-              "/home/deathraymind/AxiomOS/modules/home-manager/hyprland/godhands.jpg"
+              "/home/deathraymind/ErebOS/modules/home-manager/hyprland/godhands.jpg"
             ];
           }
         ];
@@ -167,6 +167,10 @@ in {
         };
 
         layout = {
+          preset-column-widths = [
+            {proportion = 0.5;}
+            {proportion = 1.0;}
+          ];
           gaps = 12;
           struts = {
             left = 12;
@@ -198,7 +202,7 @@ in {
             matches = [];
 
             # This sets the initial width to 80% of the output's width
-            default-column-width = {proportion = 0.8;};
+            default-column-width = {proportion = 0.4;};
 
             # Optional: If you want to ensure it doesn't open too small or too large
             # you can also set specific bounds here.
@@ -219,8 +223,8 @@ in {
           # Move columns/windows (The "Shift" actions you requested)
           "Mod+Shift+H".action.move-column-left = [];
           "Mod+Shift+L".action.move-column-right = [];
-
-          # Moving "Up" or "Down" moves the window/column to the workspace above or below
+          "Mod+Minus".action.set-column-width = ["-10%"];
+          "Mod+Equal".action.set-column-width = ["+10%"]; # Moving "Up" or "Down" moves the window/column to the workspace above or below
           "Mod+Shift+K".action.move-window-up-or-to-workspace-up = [];
           "Mod+Shift+J".action.move-window-down-or-to-workspace-down = [];
 
@@ -234,7 +238,7 @@ in {
           "Mod+P".action.spawn = ["hypersnip"];
           "Mod+W".action.toggle-window-floating = [];
           "Mod+I".action.spawn = ["wl-color-picker"];
-          "Alt+Return".action.maximize-column = [];
+          "Alt+Return".action.switch-preset-column-width = [];
           "Mod+Shift+F".action.fullscreen-window = [];
           "Mod+H".action.focus-column-left = [];
           "Mod+L".action.focus-column-right = [];

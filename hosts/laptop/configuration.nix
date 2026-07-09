@@ -16,7 +16,7 @@ in {
     ./hardware-configuration.nix
   ];
   environment.systemPackages = [
-    # This pulls the exact 'AxiomOS' package you were running
+    # This pulls the exact 'ErebOS' package you were running
     # and installs it as 'nvim' on your system path.
     inputs.nvf-custom.packages.${pkgs.system}.default
     pkgs.hyprpaper
@@ -67,7 +67,7 @@ in {
   nix.settings.experimental-features = ["nix-command" "flakes"];
   # Use the systemd-boot EFI boot loader.
 
-  networking.hostName = "AxiomOS";
+  networking.hostName = "ErebOS";
   networking.networkmanager.enable = true;
 
   time.timeZone = "Asia/Tokyo";
@@ -104,15 +104,15 @@ in {
   # You need access to /dev/kfd and /dev/dri/*
 
   ## Home Manager Import ##
-  axiomos.steam.enable = true;
-  axiomos.stylix = {
+  ErebOS.steam.enable = true;
+  ErebOS.stylix = {
     enable = true;
     theme = "oxocarbon-dark";
   };
 
   services.openssh.enable = true;
-  axiomos.cachy.enable = true;
-  axiomos.autologin.enable = true;
+  ErebOS.cachy.enable = true;
+  ErebOS.autologin.enable = true;
 
   hardware.bluetooth.enable = true;
   services.upower.enable = true; # Needed for battery status

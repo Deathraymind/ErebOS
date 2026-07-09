@@ -1,11 +1,11 @@
 { lib, config, pkgs, ... }:
 let
-  cfg = config.axiomos.zsh;  
+  cfg = config.ErebOS.zsh;  
 in 
 {
   ### 1. Define the "Switch"
-  options.axiomos.zsh = {
-    enable = lib.mkEnableOption "AxiomOS zsh Configuration";
+  options.ErebOS.zsh = {
+    enable = lib.mkEnableOption "ErebOS zsh Configuration";
   };
 
   ### 2. The Logic (Home Manager only!)

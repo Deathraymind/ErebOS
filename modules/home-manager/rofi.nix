@@ -4,7 +4,7 @@
   lib,
   ...
 }: let
-  cfg = config.axiomos.rofi;
+  cfg = config.ErebOS.rofi;
 
   # --- CUSTOMIZABLE VARIABLES ---
   # Change these to update the look across the entire config
@@ -46,8 +46,8 @@
     lines = 5;
   };
 in {
-  options.axiomos.rofi = {
-    enable = lib.mkEnableOption "AxiomOS rofi Configuration";
+  options.ErebOS.rofi = {
+    enable = lib.mkEnableOption "ErebOS rofi Configuration";
   };
 
   config = lib.mkIf cfg.enable {

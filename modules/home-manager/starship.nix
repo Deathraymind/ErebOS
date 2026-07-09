@@ -4,7 +4,7 @@
   pkgs,
   ...
 }: let
-  cfg = config.axiomos.starship;
+  cfg = config.ErebOS.starship;
   # Pull the Oxocarbon colors from Stylix
   # base0D = blue/cyan, base0E = purple, base0C = teal/aqua, base08 = pink
   colors = {
@@ -16,8 +16,8 @@
     text_dark = "#${config.stylix.base16Scheme.base00}";
   };
 in {
-  options.axiomos.starship = {
-    enable = lib.mkEnableOption "AxiomOS starship Configuration";
+  options.ErebOS.starship = {
+    enable = lib.mkEnableOption "ErebOS starship Configuration";
   };
 
   config = lib.mkIf cfg.enable {

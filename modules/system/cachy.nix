@@ -4,11 +4,11 @@
   config,
   ...
 }: let
-  cfg = config.axiomos.cachy;
+  cfg = config.ErebOS.cachy;
 in {
   ### 1. Define the "Switch"
-  options.axiomos.cachy = {
-    enable = lib.mkEnableOption "AxiomOS Cachy Kernel Configuration";
+  options.ErebOS.cachy = {
+    enable = lib.mkEnableOption "ErebOS Cachy Kernel Configuration";
   };
 
   ### 2. The Logic

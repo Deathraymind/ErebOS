@@ -4,11 +4,11 @@
   lib,
   ...
 }: let
-  cfg = config.axiomos.stylix;
+  cfg = config.ErebOS.stylix;
   themes = import ./themes.nix;
 in {
-  options.axiomos.stylix = {
-    enable = lib.mkEnableOption "AxiomOS stylix Configuration";
+  options.ErebOS.stylix = {
+    enable = lib.mkEnableOption "ErebOS stylix Configuration";
     theme = lib.mkOption {
       type = lib.types.str;
       default = "catppuccin-mocha";

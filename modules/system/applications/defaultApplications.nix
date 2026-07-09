@@ -48,6 +48,7 @@
     pkgs.devbox
     pkgs.nodejs
     pkgs.vesktop
+    pkgs.vscode
   ];
   nixpkgs.config.allowUnfreePredicate = pkg:
     builtins.elem (lib.getName pkg) [

@@ -3,11 +3,11 @@
   config,
   ...
 }: let
-  cfg = config.axiomos.kitty;
+  cfg = config.ErebOS.kitty;
 in {
   ### 1. Define the "Switch"
-  options.axiomos.kitty = {
-    enable = lib.mkEnableOption "AxiomOS kitty Configuration";
+  options.ErebOS.kitty = {
+    enable = lib.mkEnableOption "ErebOS kitty Configuration";
   };
 
   ### 2. The Logic

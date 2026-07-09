@@ -6,11 +6,11 @@
   inputs,
   ...
 }: let
-  cfg = config.axiomos.homeStylix;
+  cfg = config.ErebOS.homeStylix;
 in {
   ### 1. Define the "Switch"
-  options.axiomos.homeStylix = {
-    enable = lib.mkEnableOption "AxiomOS Home-Manager Stylix Configuration";
+  options.ErebOS.homeStylix = {
+    enable = lib.mkEnableOption "ErebOS Home-Manager Stylix Configuration";
   };
 
   ### 2. The Logic

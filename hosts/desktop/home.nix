@@ -14,21 +14,21 @@
     ../../modules/home-manager/default.nix
   ];
   stylix.enable = true;
-  axiomos.hyprland.enable = false;
-  axiomos.homeNiri.enable = true;
-  axiomos.homeNoctalia.enable = true;
-  axiomos.hyprspace.enable = false;
-  axiomos.hyprpaper.enable = false;
-  axiomos.hyprpanel.enable = false;
-  axiomos.homeStylix.enable = true;
-  axiomos.waybar.enable = true;
-  axiomos.hyprbar.enable = false;
+  ErebOS.hyprland.enable = false;
+  ErebOS.homeNiri.enable = true;
+  ErebOS.homeNoctalia.enable = true;
+  ErebOS.hyprspace.enable = false;
+  ErebOS.hyprpaper.enable = false;
+  ErebOS.hyprpanel.enable = false;
+  ErebOS.homeStylix.enable = true;
+  ErebOS.waybar.enable = true;
+  ErebOS.hyprbar.enable = false;
 
-  axiomos.git.enable = true;
-  axiomos.zsh.enable = true;
-  axiomos.kitty.enable = true;
-  axiomos.rofi.enable = true;
-  axiomos.starship.enable = false;
+  ErebOS.git.enable = true;
+  ErebOS.zsh.enable = true;
+  ErebOS.kitty.enable = true;
+  ErebOS.rofi.enable = true;
+  ErebOS.starship.enable = false;
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;

@@ -5,7 +5,7 @@
   inputs,
   ...
 }: let
-  cfg = config.axiomos.homeNoctalia;
+  cfg = config.ErebOS.homeNoctalia;
 in {
   ### 1. Imports must be at the top level
   imports = [
@@ -13,8 +13,8 @@ in {
   ];
 
   ### 2. Define the "Switch"
-  options.axiomos.homeNoctalia = {
-    enable = lib.mkEnableOption "AxiomOS Noctalia Shell Configuration";
+  options.ErebOS.homeNoctalia = {
+    enable = lib.mkEnableOption "ErebOS Noctalia Shell Configuration";
   };
 
   ### 3. The Logic
