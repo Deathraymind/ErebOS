@@ -5,11 +5,11 @@
   inputs,
   ...
 }: let
-  cfg = config.axiomos.hyprspace;
+  cfg = config.ErebOS.hyprspace;
   system = pkgs.stdenv.hostPlatform.system;
 in {
-  options.axiomos.hyprspace = {
-    enable = lib.mkEnableOption "AxiomOS hyprspace Configuration";
+  options.ErebOS.hyprspace = {
+    enable = lib.mkEnableOption "ErebOS hyprspace Configuration";
   };
 
   config = lib.mkIf cfg.enable {

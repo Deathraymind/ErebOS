@@ -5,10 +5,10 @@
   inputs,
   ...
 }: let
-  cfg = config.axiomos.hyprland;
+  cfg = config.ErebOS.hyprland;
 in {
-  options.axiomos.hyprland = {
-    enable = lib.mkEnableOption "AxiomOS Hyprland Composite Config";
+  options.ErebOS.hyprland = {
+    enable = lib.mkEnableOption "ErebOS Hyprland Composite Config";
   };
 
   config = lib.mkIf cfg.enable {

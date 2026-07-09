@@ -6,11 +6,11 @@
   ...
 }: let
   # This makes it easier to reference your own toggle
-  cfg = config.axiomos.hyprland;
+  cfg = config.ErebOS.hyprland;
 in {
   ### 1. Define the "Switch"
-  options.axiomos.hyprpanel = {
-    enable = lib.mkEnableOption "AxiomOS hyprpanel Composite Config";
+  options.ErebOS.hyprpanel = {
+    enable = lib.mkEnableOption "ErebOS hyprpanel Composite Config";
   };
 
   ### 2. The Logic (Only applies if enable is true)

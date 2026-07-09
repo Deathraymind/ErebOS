@@ -4,7 +4,7 @@
   pkgs,
   ...
 }: let
-  cfg = config.axiomos.waybar;
+  cfg = config.ErebOS.waybar;
 
   # --- TWEAK THESE ---
   vars = {
@@ -23,8 +23,8 @@
   # Helper for the border string
   border-style = "${vars.thickness} solid ${vars.border-color}";
 in {
-  options.axiomos.waybar = {
-    enable = lib.mkEnableOption "AxiomOS waybar Compositer Config";
+  options.ErebOS.waybar = {
+    enable = lib.mkEnableOption "ErebOS waybar Compositer Config";
   };
 
   config = lib.mkIf cfg.enable {

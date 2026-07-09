@@ -5,11 +5,11 @@
   inputs,
   ...
 }: let
-  cfg = config.axiomos.hyprbar;
+  cfg = config.ErebOS.hyprbar;
 in {
   ### 1. Define the "Switch"
-  options.axiomos.hyprbar = {
-    enable = lib.mkEnableOption "AxiomOS Hyprbar Configuration";
+  options.ErebOS.hyprbar = {
+    enable = lib.mkEnableOption "ErebOS Hyprbar Configuration";
   };
 
   ### 2. The Logic

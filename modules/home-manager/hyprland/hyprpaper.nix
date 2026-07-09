@@ -4,11 +4,11 @@
   pkgs,
   ...
 }: let
-  cfg = config.axiomos.hyprpaper;
+  cfg = config.ErebOS.hyprpaper;
 in {
   # 1. Option Definition
-  options.axiomos.hyprpaper = {
-    enable = lib.mkEnableOption "AxiomOS Hyprpaper Configuration";
+  options.ErebOS.hyprpaper = {
+    enable = lib.mkEnableOption "ErebOS Hyprpaper Configuration";
   };
 
   # 2. Configuration Logic
