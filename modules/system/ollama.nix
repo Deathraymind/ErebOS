@@ -4,7 +4,6 @@
   config,
   lib,
   ollama-fix,
-  openclaw,
   ...
 }: let
   # This tells Nix to use the unstable branch for this specific variable
