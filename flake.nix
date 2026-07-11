@@ -8,17 +8,12 @@
     };
     # Official Plugins Flake - forced to follow your Hyprland version
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable"; # for cachy kernal
-    openclaw.url = "github:openclaw/nix-openclaw";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-25.11";
     stylix.url = "github:danth/stylix";
     nvf-custom.url = "github:deathraymind/nvf";
     hyprland.url = "github:hyprwm/Hyprland/";
     niri.url = "github:sodiboo/niri-flake";
-    lanzaboote = {
-      url = "github:nix-community/lanzaboote/v1.0.0";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland"; # This is the magic line
@@ -42,7 +37,6 @@
     noctalia,
     nixpkgs-unstable,
     openclaw,
-    lanzaboote,
     ...
   } @ inputs: let
     # 1. Define the ROCm-specific unstable package here
@@ -67,7 +61,6 @@
         inputs.home-manager.nixosModules.default
         inputs.stylix.nixosModules.stylix
         chaotic.nixosModules.default
-        lanzaboote.nixosModules.lanzaboote
         {
           home-manager = {
             extraSpecialArgs = {inherit inputs;};

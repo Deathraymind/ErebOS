@@ -7,10 +7,11 @@
     ./desktop-logic.nix
     ./steam.nix
     ./stylix.nix
-    ./applications/defaultApplications.nix
-    ./applications/screenshot.nix
+    ./defaultApplications.nix
     ./cachy.nix
     ./autologin.nix
-    # ./ollama.nix
+    ./ollama.nix
+    ./tmux.nix
+    ./screenshot.nix
   ];
 }
