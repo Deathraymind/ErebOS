@@ -23,6 +23,7 @@ in {
     pkgs.hyprshot
     pkgs.sbctl
     pkgs.nfs-utils
+    pkgs.glib #required for niri kde connect kdeconnect plugin
   ];
   services.udisks2.enable = true;
   services.gvfs.enable = true;
@@ -32,6 +33,7 @@ in {
   # for ollamprograms.adb.enable = true;a
 
   systemd.services.NetworkManager-wait-online.enable = false;
+  programs.kdeconnect.enable = true;
   # Kill that xrdb error once and for all
   # We still enable the module so Nix knows how to handle the manual/docs
   # but we don't need to define 'settings' if you just want the fork's defaults.
@@ -124,7 +126,7 @@ in {
   services.upower.enable = true; # Needed for battery status
 
   system.stateVersion = "25.05";
-
+  services.twingate.enable = true;
   # 1. Enable dconf (Required for the GNOME portal to function)
   programs.gamemode.enable = true;
   programs.dconf.enable = true;

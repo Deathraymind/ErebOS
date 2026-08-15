@@ -11,10 +11,6 @@
   #  services.expressvpn.enable = true;
   # Install virt-manager
   programs.virt-manager.enable = true;
-  programs.kdeconnect = {
-    enable = true;
-    package = pkgs.valent;
-  };
   programs.appimage = {
     enable = true;
     binfmt = true;

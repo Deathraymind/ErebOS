@@ -4,6 +4,7 @@
   ...
 }: {
   virtualisation.docker.enable = true;
+  virtualisation.diskSize = lib.mkForce 40480; # 20 GB initial image size
   virtualisation.oci-containers.backend = "docker";
 
   # No published image exists, so clone + build it locally first.

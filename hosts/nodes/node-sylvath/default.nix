@@ -17,4 +17,8 @@
     tengigMac = "80:3f:5d:d3:ae:76";
     peerIps = ["10.0.0.2"];
   };
+  services.tailscale = {
+    enable = true;
+    useRoutingFeatures = "server"; # lets this host advertise subnet routes
+  };
 }
