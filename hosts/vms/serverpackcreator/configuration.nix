@@ -4,6 +4,12 @@
   config,
   ...
 }: {
+  systemd.services.docker-serverpackcreator-db = {
+    after = ["run-secrets.mount" "sops-nix.service"];
+    wants = ["sops-nix.service"];
+  };
+  virtualisation.diskSize = lib.mkForce 30480;
+
   virtualisation.docker = {
     enable = true;
     # Set up resource limits
@@ -34,7 +40,6 @@
   };
 
   # --- SOPS SECRETS ---
-  sops.defaultSopsFile = ../../../secrets/pelican.yaml;
   sops.age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
   # --- SERVERPACKCREATOR (web) ---
   # SPC needs both containers on a shared user-defined network so docker's
@@ -78,7 +83,7 @@
     backend = "docker";
     containers = {
       serverpackcreator-db = {
-        image = "mongodb/mongodb-community-server:8.0.5-ubuntu2204";
+        image = "mongo:4.4";
         extraOptions = ["--network=spc"];
         environment.MONGO_INITDB_DATABASE = "serverpackcreatordb";
         environmentFiles = [config.sops.secrets."spc/env".path];
@@ -103,7 +108,7 @@
           SPC_DATABASE_DB = "serverpackcreatordb";
         };
         environmentFiles = [config.sops.secrets."spc/env".path];
-        ports = ["127.0.0.1:8080:8080"]; # localhost only — reverse-proxy w/ auth
+        ports = ["8080:8080"]; # localhost only — reverse-proxy w/ auth
         volumes = [
           "/var/lib/serverpackcreator/modpacks:/app/serverpackcreator/modpacks"
           "/var/lib/serverpackcreator/server-packs:/app/serverpackcreator/server-packs"

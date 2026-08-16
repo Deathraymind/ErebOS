@@ -23,6 +23,7 @@ in {
     ./qemu-live-import.nix
     ./vm-backup-push.nix
     ./vm-restic-backup.nix
+    ./vm-restic-import.nix
   ];
   options.homelab.node = {
     lanAddress = lib.mkOption {
@@ -149,6 +150,7 @@ in {
       serviceConfig.Type = "oneshot";
       serviceConfig.ExecStart = "${config.programs.vm-restic-backup.package}/bin/vm-restic-backup";
     };
+    programs.vm-restic-restore.enable = true;
     programs.qemu-live-export = {
       enable = true;
       compressor = "zstd";

@@ -7,7 +7,7 @@
   networking.interfaces.enp1s0 = {
     ipv4.addresses = [
       {
-        address = "192.168.1.50";
+        address = "192.168.1.61";
         prefixLength = 24;
       }
     ];
@@ -17,7 +17,7 @@
   networking = {
     firewall.allowedTCPPorts = [8080 2022 80 443];
     defaultGateway = "192.168.1.1";
-    hostName = "pelican";
+    hostName = "serverpackcreator";
     nameservers = ["1.1.1.1" "8.8.8.8"];
     networkmanager.enable = true;
     useDHCP = false;
