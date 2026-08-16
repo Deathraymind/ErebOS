@@ -23,7 +23,7 @@ in {
     ./qemu-live-import.nix
     ./vm-backup-push.nix
     ./vm-restic-backup.nix
-    ./vm-restic-import.nix
+    ./vm-restic-restore.nix
   ];
   options.homelab.node = {
     lanAddress = lib.mkOption {
