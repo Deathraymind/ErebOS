@@ -66,6 +66,15 @@
       ];
       specialArgs = {inherit inputs;};
     };
+    nixosConfigurations.cm220-1 = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        ./hosts/nodes/cm220-1/default.nix
+        inputs.sops-nix.nixosModules.sops
+      ];
+      specialArgs = {inherit inputs;};
+    };
+
     nixosConfigurations.node2 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [

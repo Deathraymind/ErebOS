@@ -19,5 +19,6 @@ in {
     pkgs.obs-studio
     pkgs.python3
     pkgs.arduino-ide
+    pkgs.ryubing
   ];
 }

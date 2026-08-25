@@ -1,4 +1,3 @@
-# This is depricated dont use for now, DO NOT EDIT UNLESS TOLD
 {
   config,
   pkgs,
@@ -11,28 +10,20 @@ in {
   imports = [
     inputs.niri.homeModules.niri
   ];
+
   options.ErebOS.homeNiri = {
     enable = lib.mkEnableOption "ErebOS Niri Compositor Configuration";
   };
+
   config = lib.mkIf cfg.enable {
-    home.packages = with pkgs; [
-      xwayland-satellite
-      xdg-desktop-portal-gtk
-      xdg-desktop-portal-gnome
-    ];
-    home.sessionVariables = {
-      XDG_CURRENT_DESKTOP = "niri";
-      XDG_SESSION_DESKTOP = "niri";
-      NIXOS_OZONE_WL = "1";
-    };
-    # Apply the check override
-    nixpkgs.overlays = [
-      (final: prev: {
-        niri = prev.niri.overrideAttrs (oldAttrs: {
-          doCheck = false;
-        });
-      })
-    ];
+    # ---- XDG portals --------------------------------------------------------
+    # Single definition only. Two full `xdg.portal = {...}` assignments in one
+    # config block collide ("attribute 'portal' already defined") and fail eval.
+    #
+    # Routing: gnome stays the default (better ScreenCast under niri), but
+    # FileChooser is pinned to gtk. The gnome FileChooser backend expects a live
+    # GNOME session and just hangs under niri, which is why upload dialogs never
+    # appear. gtk's FileChooser has no such dependency.
     xdg.portal = {
       enable = true;
       extraPortals = [
@@ -42,13 +33,41 @@ in {
       config = {
         common = {
           default = ["gtk"];
+          "org.freedesktop.portal.FileChooser" = ["gtk"];
+          "org.freedesktop.portal.ScreenCast" = ["gnome"];
         };
-        # This specifically stops GNOME apps from waiting for gnome-shell
         niri = {
-          default = ["gnome" "gtk"];
+          default = ["gtk"];
+          "org.freedesktop.portal.FileChooser" = ["gtk"];
+          "org.freedesktop.portal.ScreenCast" = ["gnome"];
         };
       };
     };
+
+    home.packages = with pkgs; [
+      xwayland-satellite
+      xdg-desktop-portal-gtk
+      xdg-desktop-portal-gnome
+    ];
+    xdg.mimeApps = {
+      enable = true;
+      defaultApplications."inode/directory" = "org.gnome.Nautilus.desktop";
+    };
+    home.sessionVariables = {
+      XDG_CURRENT_DESKTOP = "niri";
+      XDG_SESSION_DESKTOP = "niri";
+      NIXOS_OZONE_WL = "1";
+      QT_QPA_PLATFORMTHEME = lib.mkForce "gnome";
+    };
+
+    # Skip niri's test suite on build.
+    nixpkgs.overlays = [
+      (final: prev: {
+        niri = prev.niri.overrideAttrs (oldAttrs: {
+          doCheck = false;
+        });
+      })
+    ];
 
     programs.niri = {
       enable = true;
@@ -61,7 +80,7 @@ in {
               curve = "linear";
               duration-ms = 500;
             };
-            # Nix will read the contents of the file and insert it here
+            # Nix reads the file contents and inserts them here.
             custom-shader = builtins.readFile ./niri-animations/honeycomb-open.glsl;
           };
           window-close = {
@@ -72,10 +91,12 @@ in {
             custom-shader = builtins.readFile ./niri-animations/honeycomb-close.glsl;
           };
         };
+
         prefer-no-csd = true;
+
         spawn-at-startup = [
-          {command = ["xwayland-satellite"];} # Add this line
-          {command = ["kdeconnectd"];} # Add this line
+          {command = ["xwayland-satellite"];}
+          {command = ["kdeconnectd"];}
           {
             command = [
               "${pkgs.dbus}/bin/dbus-update-activation-environment"
@@ -87,16 +108,25 @@ in {
             ];
           }
           {
-            # This block is the "magic" for screencasting
+            # Import the session env into D-Bus, then bounce the portal stack so
+            # the backends and the router all pick it up. The original stopped
+            # all three units but only restarted the two backends, never the
+            # router (xdg-desktop-portal) that owns org.freedesktop.portal.Desktop
+            # and dispatches Firefox's FileChooser call. Restarting the router
+            # last re-activates the backends it needs on demand.
             command = [
               "sh"
               "-c"
               ''
-                ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=niri XDG_SESSION_DESKTOP=niri
-                            
-                systemctl --user stop xdg-desktop-portal xdg-desktop-portal-gnome xdg-desktop-portal-gtk
-                            
-                systemctl --user start xdg-desktop-portal-gnome xdg-desktop-portal-gtk              ''
+                ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd \
+                  DISPLAY WAYLAND_DISPLAY \
+                  XDG_CURRENT_DESKTOP=niri XDG_SESSION_DESKTOP=niri
+
+                systemctl --user restart \
+                  xdg-desktop-portal-gnome \
+                  xdg-desktop-portal-gtk \
+                  xdg-desktop-portal
+              ''
             ];
           }
           {command = ["noctalia"];}
@@ -143,6 +173,7 @@ in {
               y = 1440;
             }; # below DP-2
           };
+
           "HDMI-A" = {
             mode = {
               width = 1920;
@@ -153,7 +184,6 @@ in {
               rotation = 90;
               flipped = false;
             };
-
             position = {
               x = -1080;
               y = 1000;
@@ -176,7 +206,7 @@ in {
           border = {
             enable = true;
             width = 1;
-            active.color = "#${config.lib.stylix.colors.base03}"; # Note: used config.lib.stylix for safety
+            active.color = "#${config.lib.stylix.colors.base03}";
             inactive.color = "#${config.lib.stylix.colors.base01}";
           };
           focus-ring = {
@@ -209,17 +239,19 @@ in {
         ];
 
         binds = {
-          # Move columns/windows (The "Shift" actions you requested)
+          # Move columns / windows
           "Mod+Shift+H".action.move-column-left = [];
           "Mod+Shift+L".action.move-column-right = [];
           "Mod+Minus".action.set-column-width = ["-10%"];
-          "Mod+Equal".action.set-column-width = ["+10%"]; # Moving "Up" or "Down" moves the window/column to the workspace above or below
+          "Mod+Equal".action.set-column-width = ["+10%"];
+          # Move window to the workspace above / below
           "Mod+Shift+K".action.move-window-up-or-to-workspace-up = [];
           "Mod+Shift+J".action.move-window-down-or-to-workspace-down = [];
 
-          # Optional: Consume or Expel windows from a column
+          # Consume / expel windows from a column
           "Mod+BracketLeft".action.consume-or-expel-window-left = [];
           "Mod+BracketRight".action.consume-or-expel-window-right = [];
+
           "Mod+O".action.toggle-overview = [];
           "Mod+T".action.spawn = ["kitty"];
           "Mod+Q".action.close-window = [];
@@ -233,6 +265,7 @@ in {
           "Mod+L".action.focus-column-right = [];
           "Mod+K".action.focus-window-or-workspace-up = [];
           "Mod+J".action.focus-window-or-workspace-down = [];
+
           "XF86AudioPlay".action.spawn = ["playerctl" "play-pause"];
           "XF86AudioNext".action.spawn = ["playerctl" "next"];
           "XF86MonBrightnessUp".action.spawn = ["brightnessctl" "set" "5%+"];

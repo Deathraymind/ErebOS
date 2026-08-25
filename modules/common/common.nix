@@ -4,6 +4,7 @@
   ...
 }: {
   virtualisation.diskSize = 20480; # 20 GB initial image size
+  boot.initrd.systemd.emergencyAccess = true;
   boot.growPartition = true; # Automatically expands to fit Proxmox disk resizes
   fileSystems."/".autoResize = true;
   services.qemuGuest.enable = true;

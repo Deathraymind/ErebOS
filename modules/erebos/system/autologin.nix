@@ -18,7 +18,7 @@ in {
       settings = {
         default_session = {
           # Replace 'yourusername' with your actual NixOS username
-          command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd 'niri'";
+          command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd 'niri-session'";
           user = "deathraymind";
         };
       };

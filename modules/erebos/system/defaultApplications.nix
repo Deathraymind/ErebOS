@@ -23,9 +23,16 @@
       pkgs.xdg-desktop-portal-gtk
     ];
     config = {
-      common.default = ["gnome" "gtk"];
-      # You can be specific for screencasting if needed:
-      # "org.freedesktop.impl.portal.ScreenCast" = "gnome";
+      common = {
+        default = ["gtk"];
+        "org.freedesktop.portal.FileChooser" = ["gtk"];
+        "org.freedesktop.portal.ScreenCast" = ["gnome"];
+      };
+      niri = {
+        default = ["gtk"];
+        "org.freedesktop.portal.FileChooser" = ["gtk"];
+        "org.freedesktop.portal.ScreenCast" = ["gnome"];
+      };
     };
   };
   services.flatpak.enable = true;
