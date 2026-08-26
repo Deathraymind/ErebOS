@@ -1,6 +1,7 @@
 {...}: {
   imports = [
     ../../../modules/ishikori/qemu-node.nix
+    ../../../modules/ishikori/incus-host.nix
     ./hardware.nix
   ];
   programs.vm-restic-backup = {
@@ -21,7 +22,7 @@
     bridgeInterface = "eno1";
     tengigAddress = "10.0.0.1";
     tengigMac = "80:3f:5d:d3:ae:76";
-    peerIps = ["10.0.0.2"];
+    peerIps = ["10.0.0.2" "192.168.1.98"];
   };
 
   ############################################################

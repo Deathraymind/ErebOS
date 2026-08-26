@@ -21,7 +21,7 @@
     bridgeInterface = "enp3s0f0";
     tengigAddress = "10.0.0.2";
     tengigMac = "80:3f:5d:d3:ae:ed";
-    peerIps = ["10.0.0.1"];
+    peerIps = ["10.0.0.1" "192.168.1.98"];
   };
   fileSystems."/srv/share" = {
     # Replace with the actual IP of the other server and the path it exports

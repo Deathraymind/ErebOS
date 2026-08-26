@@ -12,6 +12,7 @@
   rootKeys = {
     node1 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOnrq0rH4MjPgJc6jGr0gy8aLO1ew5NqHpEQnXGjWyqM root@node1";
     node2 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICv8bQ88LagNgl17dyQiSnrlRGRcdrlS/o/wKpF0P76Y root@node2";
+    cm220-1 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP6PuiirDxhKNlcvHJc3BbzDG4SmlygASIHTC2hhls1O root@cm220-1";
   };
 in {
   imports = [
