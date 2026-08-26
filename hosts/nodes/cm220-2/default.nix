@@ -19,7 +19,6 @@
   boot.loader.grub.efiInstallAsRemovable = false;
 
   networking.useDHCP = false;
-  networking.nameservers = lib.mkDefault ["1.1.1.1" "8.8.8.8"];
 
   networking.interfaces.br0.ipv4.addresses = [
     {
@@ -27,8 +26,25 @@
       prefixLength = 24;
     }
   ];
+  ############################################################
+  ## SSH / Nix
+  ############################################################
+  services.openssh.enable = true;
+  nix.settings.experimental-features = ["nix-command" "flakes"];
+  nix.settings.trusted-users = ["root" "deathraymind"];
 
-  virtualisation.libvirtd.allowedBridges = ["br0" "virbr0"];
+  ############################################################
+  ## Users
+  ############################################################
+  users.users.deathraymind = {
+    isNormalUser = true;
+    description = "Primary User";
+    extraGroups = ["wheel" "incus-admin"];
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII1p2OamHpIwYUh0mS3yj/CDmT01n4leoYCd/tuqMJHt deathraymind@gmail.com"
+    ];
+    hashedPassword = "$6$X6ADCAYJr36.atJY$aOzF6Drf0YEq2ac3QnFFU3bhJZNuY/hX9Fux6dcJCeiQTNBK1F3oFKqqlhpUoKVJA34gfIWs0VkcO1051jn5d0";
+  };
 
   # 10G direct node-to-node link (systemd-networkd)
   systemd.network.enable = true;
