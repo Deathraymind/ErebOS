@@ -41,7 +41,7 @@
     useDHCP = false;
     ipv4.addresses = [
       {
-        address = "192.168.1.98"; # FIXME: node1's static IP (unchanged)
+        address = "192.168.1.97"; # FIXME: node1's static IP (unchanged)
         prefixLength = 24;
       }
     ];

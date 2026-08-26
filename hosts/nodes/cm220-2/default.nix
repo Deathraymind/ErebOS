@@ -1,8 +1,8 @@
-{...}: {
+{lib, ...}: {
   imports = [
-    ../../../modules/ishikori/qemu-node.nix
     ./hardware.nix
     ./incus-host.nix
+    ./sd.nix
   ];
   programs.vm-restic-backup = {
     enable = true;
@@ -18,22 +18,24 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub.efiInstallAsRemovable = false;
 
-  homelab.node = {
-    lanAddress = "192.168.1.98";
-    bridgeInterface = "enp1s0f0";
+  networking.useDHCP = false;
+  networking.nameservers = lib.mkDefault ["1.1.1.1" "8.8.8.8"];
 
-    tengigAddress = "10.0.0.3";
-    tengigMac = "80:3f:5d:d3:ae:ed";
-    peerIps = ["192.168.1.100" "192.168.1.99"];
-  };
-  #fileSystems."/srv/share" = {
-  # Replace with the actual IP of the other server and the path it exports
-  # device = "10.0.0.1:/srv/share";
-  # fsType = "nfs";
+  networking.interfaces.br0.ipv4.addresses = [
+    {
+      address = "192.168.1.97";
+      prefixLength = 24;
+    }
+  ];
 
-  # These options are crucial: they mount the share "on demand"
-  # so your VM server doesn't freeze during boot if the remote server is offline.
-  # options = ["x-systemd.automount" "noauto" "x-systemd.idle-timeout=600"];
-  # };
-  programs.qemu-live-export.outputDir = "/srv/share/cold-export";
+  virtualisation.libvirtd.allowedBridges = ["br0" "virbr0"];
+
+  # 10G direct node-to-node link (systemd-networkd)
+  systemd.network.enable = true;
+  systemd.network.wait-online.enable = false;
+  #systemd.network.networks."10-tengig" = {
+  #matchConfig.PermanentMACAddress = cfg.tengigMac;
+  #address = ["${cfg.tengigAddress}/24"];
+  #linkConfig.RequiredForOnline = "no";
+  #};
 }
