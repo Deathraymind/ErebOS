@@ -36,12 +36,12 @@
   # first boot: no live cutover, no risk of dropping your SSH session moving
   # the host IP onto the bridge (which is how bridging bites people).
   networking.useDHCP = false;
-  networking.bridges.br0.interfaces = ["eno1"]; # FIXME: e.g. eno1
+  networking.bridges.br0.interfaces = ["enp1s0f0"]; # FIXME: e.g. eno1
   networking.interfaces.br0 = {
     useDHCP = false;
     ipv4.addresses = [
       {
-        address = "192.168.1.100"; # FIXME: node1's static IP (unchanged)
+        address = "192.168.1.98"; # FIXME: node1's static IP (unchanged)
         prefixLength = 24;
       }
     ];
