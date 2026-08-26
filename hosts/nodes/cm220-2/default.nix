@@ -19,7 +19,7 @@
   boot.loader.grub.efiInstallAsRemovable = false;
 
   homelab.node = {
-    lanAddress = "192.168.1.97";
+    lanAddress = "192.168.1.98";
     bridgeInterface = "enp1s0f0";
 
     tengigAddress = "10.0.0.3";
