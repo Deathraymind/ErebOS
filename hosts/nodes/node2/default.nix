@@ -2,6 +2,7 @@
   imports = [
     ../../../modules/ishikori/qemu-node.nix
     ./hardware.nix
+    ./incus-host.nix
   ];
   programs.vm-restic-backup = {
     enable = true;
