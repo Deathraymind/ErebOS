@@ -19,10 +19,10 @@
   # nvme zfs drive
 
   # nvme drive
-  fileSystems."/var/lib/libvirt/images" = {
-    device = "vmpool/images";
-    fsType = "zfs";
-  };
+  #fileSystems."/var/lib/libvirt/images" = {
+  #device = "vmpool/images";
+  #fsType = "zfs";
+  # };
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/1cc058e9-6f83-4ca5-a7b7-7b9fed099922";
     fsType = "ext4";
