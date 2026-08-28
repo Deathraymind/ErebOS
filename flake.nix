@@ -107,6 +107,14 @@
       ];
       specialArgs = {inherit inputs;};
     };
+    nixosConfigurations.coredns = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        ./hosts/containers/coredns/configuration.nix
+      ];
+      specialArgs = {inherit inputs;};
+    };
+
     nixosConfigurations.yattee = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
