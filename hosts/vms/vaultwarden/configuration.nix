@@ -44,22 +44,22 @@
         autoStart = true;
       };
 
-      adguardhome = {
-        image = "adguard/adguardhome:latest";
-        ports = [
-          "53:53/tcp"
-          "53:53/udp" # DNS
-          "3000:3000/tcp"
-          "80:80/tcp" # Web UI Setup / Dashboard
-          "443:443/tcp"
-          "853:853/tcp" # Encrypted DNS (Optional)
-        ];
-        volumes = [
-          "/var/lib/adguardhome/work:/opt/adguardhome/work"
-          "/var/lib/adguardhome/conf:/opt/adguardhome/conf"
-        ];
-        autoStart = true;
-      };
+      #adguardhome = {
+      #image = "adguard/adguardhome:latest";
+      #ports = [
+      #"53:53/tcp"
+      #"53:53/udp" # DNS
+      #"3000:3000/tcp"
+      #"80:80/tcp" # Web UI Setup / Dashboard
+      #"443:443/tcp"
+      #"853:853/tcp" # Encrypted DNS (Optional)
+      #];
+      #volumes = [
+      #"/var/lib/adguardhome/work:/opt/adguardhome/work"
+      #"/var/lib/adguardhome/conf:/opt/adguardhome/conf"
+      #  ];
+      #autoStart = true;
+      #};
       homeassistant = {
         image = "ghcr.io/home-assistant/home-assistant:stable";
         volumes = [
