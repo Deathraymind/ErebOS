@@ -46,7 +46,7 @@
       # --- Incus-owned network and you've set core.dns_address + the zone peer
       # home.incus {
       #   secondary {
-      #     transfer from 192.168.1.5:1053
+      #     transfer from 192.168.1.100:1053
       #   }
       # }
 
