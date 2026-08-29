@@ -35,19 +35,6 @@
   # NAT bridge. Because node1 is a fresh install, we bake the bridge in from
   # first boot: no live cutover, no risk of dropping your SSH session moving
   # the host IP onto the bridge (which is how bridging bites people).
-  networking.useDHCP = false;
-  networking.bridges.br0.interfaces = ["eno1"]; # FIXME: e.g. eno1
-  networking.interfaces.br0 = {
-    useDHCP = false;
-    ipv4.addresses = [
-      {
-        address = "192.168.1.100"; # FIXME: node1's static IP (unchanged)
-        prefixLength = 24;
-      }
-    ];
-  };
-  networking.defaultGateway = "192.168.1.1"; # FIXME
-  networking.nameservers = ["192.168.1.1"]; # FIXME
 
   # --- Incus ------------------------------------------------------------
   virtualisation.incus = {
@@ -106,6 +93,25 @@
       ];
     };
   };
+  ############################################################
+  ## SSH / Nix
+  ############################################################
+  services.openssh.enable = true;
+  nix.settings.experimental-features = ["nix-command" "flakes"];
+  nix.settings.trusted-users = ["root" "deathraymind"];
+
+  ############################################################
+  ## Users
+  ############################################################
+  users.users.deathraymind = {
+    isNormalUser = true;
+    description = "Primary User";
+    extraGroups = ["wheel" "incus-admin"];
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII1p2OamHpIwYUh0mS3yj/CDmT01n4leoYCd/tuqMJHt deathraymind@gmail.com"
+    ];
+    hashedPassword = "$6$X6ADCAYJr36.atJY$aOzF6Drf0YEq2ac3QnFFU3bhJZNuY/hX9Fux6dcJCeiQTNBK1F3oFKqqlhpUoKVJA34gfIWs0VkcO1051jn5d0";
+  };
 
   # UI/API port. (Instance traffic rides the bridge and isn't filtered by
   # the host firewall; this is only for reaching Incus itself.)
@@ -113,4 +119,6 @@
 
   # Handy to have the disk tooling around for the qcow2 import step.
   environment.systemPackages = with pkgs; [qemu-utils];
+
+  system.stateVersion = "26.05";
 }

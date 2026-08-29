@@ -8,14 +8,20 @@
   imports = ["${modulesPath}/virtualisation/lxc-container.nix"]; # sets boot.isContainer, no bootloader/fstab
 
   networking.hostName = "ct15";
+
+  # Fix: Stop NixOS from expecting the host's resolv.conf when using systemd-networkd
+  networking.useHostResolvConf = false;
+
   networking.useDHCP = false;
-  networking.interfaces."eth0@if8".ipv4.addresses = [
-    {
-      address = "192.168.1.15";
-      prefixLength = 24;
-    }
-  ];
-  networking.defaultGateway = "192.168.1.1";
+  systemd.network = {
+    enable = true;
+    networks."50-eth0" = {
+      matchConfig.Name = "eth0";
+      address = ["192.168.1.15/24"];
+      routes = [{Gateway = "192.168.1.1";}];
+      linkConfig.RequiredForOnline = "routable";
+    };
+  };
   networking.nameservers = ["192.168.1.1"];
 
   services.openssh.enable = true;
@@ -45,9 +51,9 @@
       # --- Incus auto-records: flip this on later, once instances live on an
       # --- Incus-owned network and you've set core.dns_address + the zone peer
       # home.incus {
-      #   secondary {
-      #     transfer from 192.168.1.100:1053
-      #   }
+      #    secondary {
+      #      transfer from 192.168.1.100:1053
+      #    }
       # }
 
       . {

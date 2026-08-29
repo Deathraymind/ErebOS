@@ -1,28 +1,15 @@
 {...}: {
   imports = [
-    ../../../modules/ishikori/qemu-node.nix
     ../../../modules/ishikori/incus-host.nix
     ./hardware.nix
+    ./networking.nix
   ];
-  programs.vm-restic-backup = {
-    enable = true;
-    vms = ["caddy" "pelican" "pelican-wings" "vaultwarden"];
-    repository = "s3:https://ee25c8a9bd470793ee087dabb15f70fd.r2.cloudflarestorage.com/hypervisor-backups/restic";
-  };
   networking.hostName = "node1";
   networking.hostId = "4c27bb3b"; # must be unique per node (ZFS)
 
   boot.loader.grub = {
     enable = true;
     device = "/dev/disk/by-id/ata-Samsung_SSD_840_Series_S19HNSAD511826K";
-  };
-
-  homelab.node = {
-    lanAddress = "192.168.1.100";
-    bridgeInterface = "eno1";
-    tengigAddress = "10.0.0.1";
-    tengigMac = "80:3f:5d:d3:ae:76";
-    peerIps = ["10.0.0.2" "192.168.1.98"];
   };
 
   ############################################################
@@ -40,14 +27,12 @@
 
   boot.blacklistedKernelModules = ["nouveau"];
 
-  boot.zfs.extraPools = ["tank"];
-
   # the 3TB raidz2 share — nothing to do with VM storage
-  fileSystems."/srv/share" = {
-    device = "tank/data";
-    fsType = "zfs";
-    options = ["nofail"];
-  };
+  #fileSystems."/srv/share" = {
+  #device = "tank/data";
+  #fsType = "zfs";
+  #options = ["nofail"];
+  #};
 
   services.zfs.autoScrub.enable = true;
   services.nfs.server = {
