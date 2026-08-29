@@ -1,4 +1,5 @@
 {...}: {
+  nix.settings.trusted-users = ["root" "@wheel"];
   networking = {
     hostName = "teleport";
     useDHCP = false;
@@ -6,8 +7,8 @@
     nameservers = ["192.168.1.1"]; # resolve via router, not ourselves — survives a broken Corefile
 
     firewall = {
-      allowedUDPPorts = [80]; # normal DNS queries
-      allowedTCPPorts = [80]; # large responses + zone transfers
+      allowedUDPPorts = [80 3080]; # normal DNS queries
+      allowedTCPPorts = [80 3080]; # large responses + zone transfers
     };
   };
 

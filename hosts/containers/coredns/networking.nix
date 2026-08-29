@@ -1,4 +1,5 @@
 {...}: {
+  nix.settings.trusted-users = ["root" "@wheel"];
   networking = {
     hostName = "ct15";
     useDHCP = false;
