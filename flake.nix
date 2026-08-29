@@ -114,6 +114,13 @@
       ];
       specialArgs = {inherit inputs;};
     };
+    nixosConfigurations.teleport = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        ./hosts/containers/teleport/configuration.nix
+      ];
+      specialArgs = {inherit inputs;};
+    };
 
     nixosConfigurations.yattee = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
