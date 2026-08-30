@@ -1,4 +1,5 @@
 {...}: {
+  services.resolved.enable = false;
   nix.settings.trusted-users = ["root" "@wheel"];
   networking = {
     hostName = "ct15";

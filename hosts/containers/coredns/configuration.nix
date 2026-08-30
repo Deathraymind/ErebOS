@@ -27,21 +27,13 @@
       home.arpa {
         hosts {
           192.168.1.10  caddy.home.arpa
+          192.168.1.11  teleport.home.arpa
           192.168.1.50  pelican.home.arpa
           192.168.1.51  pelican-wings.home.arpa
           192.168.1.53  vaultwarden.home.arpa
-          192.168.1.11 teleport.lab.internal
           ttl 60
         }
       }
-
-      # Incus auto-records: enable once instances live on an Incus-managed
-      # network and you've set core.dns_address + the zone peer.
-      # home.incus {
-      #   secondary {
-      #     transfer from 192.168.1.100:1053
-      #   }
-      # }
 
       . {
         forward . 1.1.1.1 9.9.9.9
@@ -51,7 +43,6 @@
       }
     '';
   };
-
   # --- System ---
   nix.settings.experimental-features = ["nix-command" "flakes"];
   system.stateVersion = "26.05";

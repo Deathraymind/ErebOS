@@ -38,7 +38,7 @@
       proxy_service = {
         enabled = true;
         web_listen_addr = "0.0.0.0:443"; # or bind your tailscale IP specifically
-        public_addr = "192.168.1.11:443"; # whatever you'll type in tsh --proxy
+        public_addr = ["teleport.home.arpa:443" "192.168.1.11:443"]; # whatever you'll type in tsh --proxy
       };
       ssh_service.enabled = true;
     };

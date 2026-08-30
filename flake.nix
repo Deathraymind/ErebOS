@@ -99,6 +99,7 @@
       modules = [
         ./hosts/vms/caddy/configuration.nix
         ./hosts/vms/caddy/networking.nix
+        ./hosts/vms/caddy/teleport.nix
         ./modules/vms/hardware-configuration.nix # Include our rewritten hardware file
         ./modules/common/common.nix # Include our rewritten hardware file
 
