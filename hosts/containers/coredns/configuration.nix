@@ -30,6 +30,7 @@
           192.168.1.50  pelican.home.arpa
           192.168.1.51  pelican-wings.home.arpa
           192.168.1.53  vaultwarden.home.arpa
+          192.168.1.11 teleport.lab.internal
           ttl 60
         }
       }

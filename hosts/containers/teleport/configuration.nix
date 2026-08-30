@@ -22,6 +22,26 @@
 
   services.teleport = {
     enable = true;
+
+    settings = {
+      version = "v3";
+      teleport = {
+        nodename = "teleport-server"; # this box's name
+        data_dir = "/var/lib/teleport";
+      };
+      auth_service = {
+        enabled = true;
+        cluster_name = "homelab"; # still permanent, still can't rename
+        listen_addr = "127.0.0.1:3025"; # auth stays loopback-only
+        proxy_listener_mode = "multiplex";
+      };
+      proxy_service = {
+        enabled = true;
+        web_listen_addr = "0.0.0.0:443"; # or bind your tailscale IP specifically
+        public_addr = "192.168.1.11:443"; # whatever you'll type in tsh --proxy
+      };
+      ssh_service.enabled = true;
+    };
   };
 
   # --- System ---
