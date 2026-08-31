@@ -11,7 +11,7 @@
     hostName = host.hostname;
     useDHCP = false;
 
-    interfaces.enp5s0.ipv4.addresses = [
+    interfaces.${host.interface}.ipv4.addresses = [
       {
         address = host.ip;
         prefixLength = host.prefixLength;

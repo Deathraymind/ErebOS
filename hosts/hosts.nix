@@ -10,6 +10,7 @@
     allowedTCPPorts = [8080 2022 80 443];
     allowedUDPPorts = [];
     incus = true;
+    interface = "enp5s0";
   };
   pelican = {
     hostname = "pelican";
@@ -21,6 +22,7 @@
     allowedTCPPorts = [8080 2022 80 443];
     allowedUDPPorts = [];
     incus = true;
+    interface = "enp5s0";
   };
   pelican-wings = {
     hostname = "pelican-wings";
@@ -32,6 +34,7 @@
     allowedTCPPorts = [8080 2022 80 443];
     allowedUDPPorts = [];
     incus = true;
+    interface = "enp5s0";
   };
   vaultwarden = {
     hostname = "vaultwarden";
@@ -43,6 +46,7 @@
     allowedTCPPorts = [8080 2022 80 443];
     allowedUDPPorts = [];
     incus = true;
+    interface = "enp5s0";
   };
 
   nyx = {
