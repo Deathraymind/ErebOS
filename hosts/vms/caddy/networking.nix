@@ -1,24 +1,25 @@
 {
   pkgs,
   lib,
+  host,
   ...
 }: {
   virtualisation.incus.agent.enable = true;
 
   # Static networking (scripted backend)
   networking = {
-    hostName = "caddy";
+    hostName = host.hostname;
     useDHCP = false;
 
     interfaces.enp5s0.ipv4.addresses = [
       {
-        address = "192.168.1.10";
+        address = host.ip;
         prefixLength = 24;
       }
     ];
 
     defaultGateway = "192.168.1.1";
-    nameservers = ["192.168.1.1"];
+    nameservers = [host.nameservers];
 
     firewall.allowedTCPPorts = [8080 2022];
   };

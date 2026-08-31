@@ -1,8 +1,11 @@
 {
   pkgs,
   config,
+  lib,
   ...
-}: {
+}: let
+  hosts = import ./hosts.nix;
+in {
   virtualisation.docker = {
     enable = true;
     # Set up resource limits

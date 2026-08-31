@@ -38,6 +38,7 @@
     nvf,
     ...
   } @ inputs: let
+    hosts = import ./hosts/host.nix;
     # 1. Define the ROCm-specific unstable package here
     system = "x86_64-linux";
     unstable-pkgs = import nixpkgs-unstable {
@@ -106,7 +107,10 @@
         inputs.sops-nix.nixosModules.sops
         # This block instructs Nix to build a generic VHD image layout
       ];
-      specialArgs = {inherit inputs;};
+      specialArgs = {
+        inherit inputs;
+        host = hosts.caddy;
+      };
     };
     nixosConfigurations.coredns = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
