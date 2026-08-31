@@ -38,7 +38,7 @@
     nvf,
     ...
   } @ inputs: let
-    hosts = import ./hosts/host.nix;
+    hosts = import ./hosts/hosts.nix;
     # 1. Define the ROCm-specific unstable package here
     system = "x86_64-linux";
     unstable-pkgs = import nixpkgs-unstable {
@@ -99,7 +99,7 @@
       system = "x86_64-linux";
       modules = [
         ./hosts/vms/caddy/configuration.nix
-        ./hosts/vms/caddy/networking.nix
+        ./modules/common/networking.nix
         ./hosts/vms/caddy/teleport.nix
         ./modules/vms/hardware-configuration.nix # Include our rewritten hardware file
         ./modules/common/common.nix # Include our rewritten hardware file
@@ -212,13 +212,16 @@
       system = "x86_64-linux";
       modules = [
         ./hosts/vms/vaultwarden/configuration.nix
-        ./hosts/vms/vaultwarden/networking.nix
+        ./modules/common/networking.nix
         ./modules/vms/hardware-configuration.nix
         ./modules/common/common.nix
 
         inputs.sops-nix.nixosModules.sops
       ];
-      specialArgs = {inherit inputs;};
+      specialArgs = {
+        inherit inputs;
+        host = hosts.vaultwarden;
+      };
     };
     nixosConfigurations.pelican = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
@@ -226,13 +229,16 @@
         inputs.pelican.nixosModules.default
         {nixpkgs.overlays = [inputs.pelican.overlays.default];}
         ./hosts/vms/pelican/configuration.nix
-        ./hosts/vms/pelican/networking.nix
+        ./modules/common/networking.nix
         ./modules/vms/hardware-configuration.nix # Include our rewritten hardware file
         ./modules/common/common.nix # Include our rewritten hardware file
         inputs.sops-nix.nixosModules.sops
         # Proxmox specific configuration (Replaced hardware-configuration.nix)
       ];
-      specialArgs = {inherit inputs;};
+      specialArgs = {
+        inherit inputs;
+        host = hosts.pelican;
+      };
     };
     nixosConfigurations.pelican-wings = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
@@ -242,11 +248,14 @@
         ./modules/vms/hardware-configuration.nix
         ./modules/common/common.nix
         ./hosts/vms/pelican-wings/configuration.nix
-        ./hosts/vms/pelican-wings/networking.nix
+        ./modules/common/networking.nix
         inputs.sops-nix.nixosModules.sops
         # Proxmox specific configuration (Replaced hardware-configuration.nix)
       ];
-      specialArgs = {inherit inputs;};
+      specialArgs = {
+        inherit inputs;
+        host = hosts.pelican-wings;
+      };
     };
     nixosConfigurations.pelican-sylvath-wings = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";

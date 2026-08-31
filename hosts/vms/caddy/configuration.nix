@@ -3,9 +3,7 @@
   config,
   lib,
   ...
-}: let
-  hosts = import ./hosts.nix;
-in {
+}: {
   virtualisation.docker = {
     enable = true;
     # Set up resource limits
@@ -58,7 +56,6 @@ in {
   # Install agenix CLI
   # 1. Enable Cloud-Init so it listens to Proxmox
   # 2. Prevent ACME from racing ahead before Cloud-Init finishes writing the file
-  networking.firewall.allowedTCPPorts = [80 443];
 
   security.acme = {
     acceptTerms = true;
