@@ -100,7 +100,7 @@
       modules = [
         ./hosts/vms/caddy/configuration.nix
         ./modules/common/networking.nix
-        ./hosts/vms/caddy/teleport.nix
+        ./modules/common/teleport.nix
         ./modules/vms/hardware-configuration.nix # Include our rewritten hardware file
         ./modules/common/common.nix # Include our rewritten hardware file
 
@@ -127,63 +127,11 @@
       specialArgs = {inherit inputs;};
     };
 
-    nixosConfigurations.yattee = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        ./hosts/vms/yattee/configuration.nix
-        ./hosts/vms/yattee/networking.nix
-        ./modules/vms/hardware-configuration.nix # Include our rewritten hardware file
-        ./modules/common/common.nix # Include our rewritten hardware file
-
-        inputs.sops-nix.nixosModules.sops
-        # This block instructs Nix to build a generic VHD image layout
-      ];
-      specialArgs = {inherit inputs;};
-    };
-    nixosConfigurations.serverpackcreator = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        ./hosts/vms/serverpackcreator/configuration.nix
-        ./hosts/vms/serverpackcreator/networking.nix
-        ./modules/vms/hardware-configuration.nix # Include our rewritten hardware file
-        ./modules/common/common.nix # Include our rewritten hardware file
-
-        inputs.sops-nix.nixosModules.sops
-        # This block instructs Nix to build a generic VHD image layout
-      ];
-      specialArgs = {inherit inputs;};
-    };
-
-    nixosConfigurations.telegraf = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        ./hosts/vms/telegraf/configuration.nix
-        ./hosts/vms/telegraf/networking.nix
-        ./modules/vms/hardware-configuration.nix # Include our rewritten hardware file
-        ./modules/common/common.nix # Include our rewritten hardware file
-
-        inputs.sops-nix.nixosModules.sops
-        # This block instructs Nix to build a generic VHD image layout
-      ];
-      specialArgs = {inherit inputs;};
-    };
-    nixosConfigurations.grafana = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        ./hosts/vms/grafana/configuration.nix
-        ./hosts/vms/grafana/networking.nix
-        ./modules/vms/hardware-configuration.nix # Include our rewritten hardware file
-        ./modules/common/common.nix # Include our rewritten hardware file
-
-        inputs.sops-nix.nixosModules.sops
-        # This block instructs Nix to build a generic VHD image layout
-      ];
-      specialArgs = {inherit inputs;};
-    };
     nixosConfigurations.caddy-sylvath = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
         ./hosts/vms/caddy-sylvath/configuration.nix
+        ./modules/common/teleport.nix
         ./hosts/vms/caddy-sylvath/networking.nix
         ./modules/vms/hardware-configuration.nix # Include our rewritten hardware file
         ./modules/common/common.nix # Include our rewritten hardware file
@@ -194,24 +142,11 @@
       specialArgs = {inherit inputs;};
     };
 
-    nixosConfigurations.nas = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        ./hosts/vms/nas/nas-host.nix
-        ./hosts/vms/nas/configuration.nix
-        ./hosts/vms/nas/networking.nix
-        ./modules/vms/hardware-configuration.nix
-        ./modules/common/common.nix
-
-        inputs.sops-nix.nixosModules.sops
-        # Proxmox specific configuration (Replaced hardware-configuration.nix)
-      ];
-      specialArgs = {inherit inputs;};
-    };
     nixosConfigurations.vaultwarden = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
         ./hosts/vms/vaultwarden/configuration.nix
+        ./modules/common/teleport.nix
         ./modules/common/networking.nix
         ./modules/vms/hardware-configuration.nix
         ./modules/common/common.nix
@@ -230,6 +165,7 @@
         {nixpkgs.overlays = [inputs.pelican.overlays.default];}
         ./hosts/vms/pelican/configuration.nix
         ./modules/common/networking.nix
+        ./modules/common/teleport.nix
         ./modules/vms/hardware-configuration.nix # Include our rewritten hardware file
         ./modules/common/common.nix # Include our rewritten hardware file
         inputs.sops-nix.nixosModules.sops
@@ -247,6 +183,7 @@
         {nixpkgs.overlays = [inputs.pelican.overlays.default];}
         ./modules/vms/hardware-configuration.nix
         ./modules/common/common.nix
+        ./modules/common/teleport.nix
         ./hosts/vms/pelican-wings/configuration.nix
         ./modules/common/networking.nix
         inputs.sops-nix.nixosModules.sops

@@ -7,7 +7,7 @@
 }: {
   sops.age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
   sops.secrets."pelican/teleport_node_token" = {
-    sopsFile = ../../../secrets/pelican.yaml;
+    sopsFile = ../../secrets/pelican.yaml;
     restartUnits = ["teleport.service"]; # roll the node if the token changes
     # default owner root:root, mode 0400 — fine, teleport runs as root
   };
