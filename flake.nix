@@ -63,15 +63,21 @@
       system = "x86_64-linux";
       modules = [
         ./hosts/nodes/node1/default.nix
+        ./modules/common/networking.nix
+        ./modules/common/teleport.nix
         inputs.sops-nix.nixosModules.sops
       ];
-      specialArgs = {inherit inputs;};
+      specialArgs = {
+        inherit inputs;
+        host = hosts.node1;
+      };
     };
     nixosConfigurations.cm220-1 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
         ./hosts/nodes/cm220-1/default.nix
         ./modules/common/networking.nix
+        ./modules/common/teleport.nix
         inputs.sops-nix.nixosModules.sops
       ];
       specialArgs = {
@@ -83,18 +89,28 @@
       system = "x86_64-linux";
       modules = [
         ./hosts/nodes/cm220-2/default.nix
+        ./modules/common/networking.nix
+        ./modules/common/teleport.nix
         inputs.sops-nix.nixosModules.sops
       ];
-      specialArgs = {inherit inputs;};
+      specialArgs = {
+        inherit inputs;
+        host = hosts.cm220-2;
+      };
     };
 
     nixosConfigurations.node2 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
         ./hosts/nodes/node2/default.nix
+        ./modules/common/networking.nix
+        ./modules/common/teleport.nix
         inputs.sops-nix.nixosModules.sops
       ];
-      specialArgs = {inherit inputs;};
+      specialArgs = {
+        inherit inputs;
+        host = hosts.node2;
+      };
     };
     # =============================
     # VM IMAGES (for building/importing)

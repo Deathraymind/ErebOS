@@ -8,6 +8,7 @@ keys:
   - &wings-sylvath age13a8qtwpggrxjlj7vsa3gta9eadlufnmgnkles0wz2h3hn4jan4fqha7vjh
   - &monitoring age16jpfz036h8kauyhe4hjq2fzm7ylqjyv8qzx8egsl0jwpzyvera4qk7hl9w
   - &serverpackcreator age18h3w940f6p9f6cjgu2pjpwgn539kf0w0x7wrpwxahdhyfn8lh4js8dnnaz
+  - &cm220-1 age16j2tx8g86wp53msmghve4zeaw0hsrdudvz9rtj85cnjkfj37ka7sm6zr6t
 creation_rules:
   - path_regex: secrets/pelican\.yaml$
     key_groups:
@@ -20,6 +21,7 @@ creation_rules:
           - *caddy-sylvath
           - *wings-sylvath
           - *serverpackcreator
+          - *cm2201
   - path_regex: secrets/monitoring\.yaml$
     key_groups:
       - age:
