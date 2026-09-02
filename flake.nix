@@ -71,9 +71,13 @@
       system = "x86_64-linux";
       modules = [
         ./hosts/nodes/cm220-1/default.nix
+        ./modules/common/networking.nix
         inputs.sops-nix.nixosModules.sops
       ];
-      specialArgs = {inherit inputs;};
+      specialArgs = {
+        inherit inputs;
+        host = hosts.cm220-1;
+      };
     };
     nixosConfigurations.cm220-2 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";

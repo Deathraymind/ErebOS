@@ -1,8 +1,6 @@
 {...}: {
   imports = [
     ./hardware.nix
-    ./incus-host.nix
-    ./networking.nix
     ../../../modules/ishikori/incus-host.nix
   ];
   networking.hostName = "cm220-1";
@@ -23,5 +21,4 @@
   # so your VM server doesn't freeze during boot if the remote server is offline.
   # options = ["x-systemd.automount" "noauto" "x-systemd.idle-timeout=600"];
   # };
-  programs.qemu-live-export.outputDir = "/srv/share/cold-export";
 }

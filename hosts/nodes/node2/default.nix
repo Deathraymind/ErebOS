@@ -2,7 +2,6 @@
   imports = [
     ../../../modules/ishikori/incus-host.nix
     ./hardware.nix
-    ./networking.nix
   ];
   networking.hostName = "node2";
   networking.hostId = "73a55545"; # must be unique per node (ZFS)
