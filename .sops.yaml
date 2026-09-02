@@ -21,7 +21,7 @@ creation_rules:
           - *caddy-sylvath
           - *wings-sylvath
           - *serverpackcreator
-          - *cm2201
+          - *cm220-1
   - path_regex: secrets/monitoring\.yaml$
     key_groups:
       - age:
