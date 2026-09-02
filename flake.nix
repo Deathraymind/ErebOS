@@ -117,6 +117,7 @@
       modules = [
         ./hosts/containers/coredns/configuration.nix
         ./modules/common/networking.nix
+        ./modules/containers/common.nix
       ];
       specialArgs = {
         inherit inputs;
@@ -128,6 +129,7 @@
       modules = [
         ./hosts/containers/teleport/configuration.nix
         ./modules/common/networking.nix
+        ./modules/containers/common.nix
       ];
       specialArgs = {
         inherit inputs;
