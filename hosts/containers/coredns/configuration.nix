@@ -1,8 +1,9 @@
 {modulesPath, ...}: {
   imports = [
     "${modulesPath}/virtualisation/lxc-container.nix" # boot.isContainer, no bootloader/fstab
-    ./networking.nix
   ];
+  services.resolved.enable = false;
+  nix.settings.trusted-users = ["root" "@wheel"];
 
   # --- Access ---
   services.openssh = {

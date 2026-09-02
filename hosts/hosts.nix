@@ -48,7 +48,30 @@
     incus = true;
     interface = "enp5s0";
   };
-
+  coredns = {
+    hostname = "coredns";
+    ip = "192.168.1.15";
+    prefixLength = 24;
+    nameservers = "192.168.1.1";
+    defaultGateway = "192.168.1.1";
+    timeZone = "Asia/Tokyo";
+    allowedTCPPorts = [53];
+    allowedUDPPorts = [53];
+    incus = true;
+    interface = "eth0";
+  };
+  teleport = {
+    hostname = "teleport";
+    ip = "192.168.1.11";
+    prefixLength = 24;
+    nameservers = "192.168.1.1";
+    defaultGateway = "192.168.1.1";
+    timeZone = "Asia/Tokyo";
+    allowedTCPPorts = [80 3080 443];
+    allowedUDPPorts = [80 3080 443];
+    incus = true;
+    interface = "eth0";
+  };
   nyx = {
   };
   # ...13 more

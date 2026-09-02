@@ -1,7 +1,6 @@
 {modulesPath, ...}: {
   imports = [
     "${modulesPath}/virtualisation/lxc-container.nix" # boot.isContainer, no bootloader/fstab
-    ./networking.nix
   ];
 
   # --- Access ---

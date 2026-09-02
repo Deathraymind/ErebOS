@@ -116,15 +116,23 @@
       system = "x86_64-linux";
       modules = [
         ./hosts/containers/coredns/configuration.nix
+        ./modules/common/networking.nix
       ];
-      specialArgs = {inherit inputs;};
+      specialArgs = {
+        inherit inputs;
+        host = hosts.coredns;
+      };
     };
     nixosConfigurations.teleport = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
         ./hosts/containers/teleport/configuration.nix
+        ./modules/common/networking.nix
       ];
-      specialArgs = {inherit inputs;};
+      specialArgs = {
+        inherit inputs;
+        host = hosts.teleport;
+      };
     };
 
     nixosConfigurations.caddy-sylvath = nixpkgs.lib.nixosSystem {
