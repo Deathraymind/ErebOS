@@ -62,6 +62,7 @@
         profiles.system = {
           sshUser = "deathraymind";
           interactiveSudo = true;
+          profilePath = "/nix/var/nix/profiles/system";
           path =
             inputs.deploy-rs.lib.x86_64-linux.activate.nixos
             self.nixosConfigurations.node1;
