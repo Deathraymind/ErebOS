@@ -20,5 +20,4 @@
     # so your VM server doesn't freeze during boot if the remote server is offline.
     options = ["x-systemd.automount" "noauto" "x-systemd.idle-timeout=600"];
   };
-  programs.qemu-live-export.outputDir = "/srv/share/cold-export";
 }

@@ -27,6 +27,10 @@
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    deploy-rs = {
+      url = "github:serokell/deploy-rs";
+      inputs.nixpkgs.follows = "nixpkgs"; # keep it on your 26.05, don't pull a second nixpkgs
+    };
   };
   outputs = {
     self,
@@ -49,16 +53,48 @@
     ollama-unstable-rocm = unstable-pkgs.ollama-rocm;
   in {
     # =============================
+    # DEPLOY-RS (2 nodes to start)
+    # =============================
+    deploy.nodes = {
+      node1 = {
+        hostname = "192.168.1.100"; # <-- the IP/name YOU ssh to for node1
+        fastConnection = true;
+        profiles.system = {
+          sshUser = "deathraymind";
+          interactiveSudo = true;
+          path =
+            inputs.deploy-rs.lib.x86_64-linux.activate.nixos
+            self.nixosConfigurations.node1;
+        };
+      };
+
+      cm220-1 = {
+        hostname = "192.168.1.98"; # <-- the IP/name YOU ssh to for cm220-1
+        fastConnection = true;
+        profiles.system = {
+          sshUser = "root";
+          path =
+            inputs.deploy-rs.lib.x86_64-linux.activate.nixos
+            self.nixosConfigurations.cm220-1;
+        };
+      };
+    };
+
+    checks =
+      builtins.mapAttrs
+      (system: deployLib: deployLib.deployChecks self.deploy)
+      inputs.deploy-rs.lib;
+    # =============================
     # PHYSICAL NODES
     # =============================
-    nixosConfigurations.node-sylvath = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        ./hosts/nodes/node-sylvath/default.nix
-        inputs.sops-nix.nixosModules.sops
-      ];
-      specialArgs = {inherit inputs;};
-    };
+    #  nixosConfigurations.node-sylvath = nixpkgs.lib.nixosSystem {
+    #system = "x86_64-linux";
+    # modules = [
+    #    ./hosts/nodes/node-sylvath/default.nix
+    #  inputs.sops-nix.nixosModules.sops
+    #];
+    # specialArgs = {inherit inputs;};
+    #};
     nixosConfigurations.node1 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
@@ -157,20 +193,20 @@
       };
     };
 
-    nixosConfigurations.caddy-sylvath = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        ./hosts/vms/caddy-sylvath/configuration.nix
-        ./modules/common/teleport.nix
-        ./hosts/vms/caddy-sylvath/networking.nix
-        ./modules/vms/hardware-configuration.nix # Include our rewritten hardware file
-        ./modules/common/common.nix # Include our rewritten hardware file
+    # nixosConfigurations.caddy-sylvath = nixpkgs.lib.nixosSystem {
+    # system = "x86_64-linux";
+    #  modules = [
+    #./hosts/vms/caddy-sylvath/configuration.nix
+    # ./modules/common/teleport.nix
+    #  ./hosts/vms/caddy-sylvath/networking.nix
+    # ./modules/vms/hardware-configuration.nix # Include our rewritten hardware file
+    # ./modules/common/common.nix # Include our rewritten hardware file
 
-        inputs.sops-nix.nixosModules.sops
-        # This block instructs Nix to build a generic VHD image layout
-      ];
-      specialArgs = {inherit inputs;};
-    };
+    # inputs.sops-nix.nixosModules.sops
+    # This block instructs Nix to build a generic VHD image layout
+    # ];
+    #      specialArgs = {inherit inputs;};
+    #};
 
     nixosConfigurations.vaultwarden = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
@@ -224,20 +260,20 @@
         host = hosts.pelican-wings;
       };
     };
-    nixosConfigurations.pelican-sylvath-wings = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        inputs.pelican.nixosModules.default
-        {nixpkgs.overlays = [inputs.pelican.overlays.default];}
-        ./modules/vms/hardware-configuration.nix
-        ./modules/common/common.nix
-        ./hosts/vms/pelican-sylvath-wings/configuration.nix
-        ./hosts/vms/pelican-sylvath-wings/networking.nix
-        inputs.sops-nix.nixosModules.sops
-        # Proxmox specific configuration (Replaced hardware-configuration.nix)
-      ];
-      specialArgs = {inherit inputs;};
-    };
+    # nixosConfigurations.pelican-sylvath-wings = nixpkgs.lib.#nixosSystem {
+    #system = "x86_64-linux";
+    #  modules = [
+    # inputs.pelican.nixosModules.default
+    #   {nixpkgs.overlays = [inputs.pelican.overlays.default];}
+    #  ./modules/vms/hardware-configuration.nix
+    #  ./modules/common/common.nix
+    #  ./hosts/vms/pelican-sylvath-wings/configuration.nix
+    #./hosts/vms/pelican-sylvath-wings/networking.nix
+    # inputs.sops-nix.nixosModules.sops
+    # Proxmox specific configuration (Replaced hardware-configuration.nix)
+    #];
+    #  specialArgs = {inherit inputs;};
+    # };
     # =============================
     # WORKSTATIONS (ErebOS)
     # =============================
