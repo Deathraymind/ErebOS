@@ -40,5 +40,13 @@
     nameservers = host.nameservers;
     firewall.allowedTCPPorts = host.allowedTCPPorts;
     firewall.allowedUDPPorts = host.allowedUDPPorts;
+
+    firewall.interfaces =
+      lib.mapAttrs (_name: cfg: {
+        allowedTCPPorts = cfg.allowedTCPPorts or [];
+        allowedUDPPorts = cfg.allowedUDPPorts or [];
+      })
+      host.interfaces;
   };
+  networking.firewall.checkReversePath = "loose";
 }

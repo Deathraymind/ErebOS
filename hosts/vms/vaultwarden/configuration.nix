@@ -69,7 +69,7 @@
         ];
         ports = [
           "5353:5353/tcp"
-          "192.168.20.2:8443:80" # bind to the net20 IP specifically
+          "192.168.20.2:8123:8123" # bind to the net20 IP specifically
         ];
 
         environment = {

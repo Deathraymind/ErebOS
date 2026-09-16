@@ -59,7 +59,7 @@ let
     nameservers = ["192.168.1.1"];
     defaultGateway = "192.168.1.1";
     timeZone = "Asia/Tokyo";
-    allowedTCPPorts = [8080 2022 80 443];
+    allowedTCPPorts = [];
     allowedUDPPorts = [];
     incus = true; # guest agent (container/VM) — nodes flip this
     incusHost = false;
@@ -104,10 +104,12 @@ in {
         enp5s0 = {
           address = "192.168.1.53";
           prefixLength = 24;
+          allowedTCPPorts = [22]; # ssh, LAN only
         }; # native VLAN, untagged
         net20 = {
           address = "192.168.20.2";
           prefixLength = 24;
+          allowedTCPPorts = [8123];
         }; # tagged VLAN 20
       };
       vlans = {
