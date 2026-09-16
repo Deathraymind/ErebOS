@@ -69,14 +69,13 @@
         ];
         ports = [
           "5353:5353/tcp"
-          "8123:8123/tcp" # Web UI Setup / Dashboard
+          "192.168.20.2:8443:80" # bind to the net20 IP specifically
         ];
 
         environment = {
           TZ = "Asia/Tokyo";
         };
         extraOptions = [
-          "--network=host" # needed for mDNS/SSDP/DHCP device discovery
           # "--device=/dev/ttyUSB0"  # uncomment if you have a Zigbee/Z-Wave stick
         ];
         autoStart = true;

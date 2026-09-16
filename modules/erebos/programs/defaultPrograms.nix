@@ -20,5 +20,7 @@ in {
     pkgs.python3
     pkgs.arduino-ide
     pkgs.ryubing
+    pkgs.teleport_18
+    pkgs.discord
   ];
 }

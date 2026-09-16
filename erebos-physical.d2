@@ -1,0 +1,99 @@
+# ══════════════════════════════════════════════════════════════
+#  erebos — PHYSICAL layer: port ↔ interface map + VLAN colouring
+#  render: d2 --layout elk --theme 200 erebos-physical.d2 out.svg
+#nix run nixpkgs#d2 -- --watch -p 8080 --browser 0 --layout elk --theme 200 erebos-physical.d2
+#  NOTE: network is a flat 192.168.1.0/24 today. VLAN IDs/subnets
+#  below are a PROPOSED segmentation mapped onto your trust tiers.
+# ══════════════════════════════════════════════════════════════
+
+direction: right
+
+# ── one colour per VLAN (edit once) ───────────────────────────
+classes: {
+  v1:    { style: { stroke: "#e05d44"; stroke-width: 2 } }  # mgmt
+  v10:   { style: { stroke: "#4a90d9"; stroke-width: 2 } }  # trusted
+  v20:   { style: { stroke: "#e8a33d"; stroke-width: 2; stroke-dash: 4 } }  # iot
+  v30:   { style: { stroke: "#8a8a8a"; stroke-width: 2 } }  # guest
+  v40:   { style: { stroke: "#b05cc9"; stroke-width: 2 } }  # monitoring
+  trunk: { style: { stroke: "#2f9e44"; stroke-width: 3 } }  # carries many VLANs
+}
+
+# ── edge gateway ──────────────────────────────────────────────
+router: Wireless router\n(OpenWRT)
+
+# ── core switch: one row per patched port ─────────────────────
+netgear: NETGEAR core switch {
+  shape: sql_table
+  p1: "router uplink"     { constraint: trunk }
+  p2: "cm220-1: cimc"    { constraint: v1 }
+  p3: "cm220-1 : eno1"      { constraint: trunk}
+  p4: "cm220-2 : cimc"      { constraint: v1 }
+  p5: "cm220-2 : eno1"      { constraint: trunk}
+  p7: "node2 : ilo"      { constraint: v1}
+  p8: "node2 : eno1"      { constraint: trunk }
+  p9: "node1 :eno1"      { constraint: trunk }
+  p10: "console :eth0"      { constraint: v1 }
+}
+
+# ── IoT edge switch ───────────────────────────────────────────
+dlink: D-Link switch {
+  shape: sql_table
+  a1: "netgear uplink"    { constraint: trunk }
+  a2: "HA #1 : wlan0"     { constraint: v20 }
+  a3: "HA #2 : wlan0"     { constraint: v20 }
+  a4: "HA #3 : wlan0"     { constraint: v20 }
+}
+
+# ── physical hosts (boxes with real NICs) ─────────────────────
+cm220-1: cm220-1 {
+  cimc: "cimc\n192.168.1.31/24"
+  eno1: "eno1\n192.168.1.98/24"
+}
+cm220-2: cm220-2 {
+  cimc: "cimc\n192.168.1.32/24"
+  eno1: "eno1\192.168.1.97/24"
+}
+console: "console (RPi)" {
+  eth0: "eth0\n192.168.1.21/24"
+}
+node1: node1 {
+  eno1: "eno1\n192.168.1.100/24"
+}
+node2: node2 {
+  ilo: "cimc\n192.168.1.36/24"
+  eno1: "eno1\192.168.1.99/24"
+}
+ha1: "Aruba AP #1"   { wlan0: "eno1\n192.168.1.20/24" }
+ha2: "Aruba AP #2"   { wlan0: "eno1\n192.168.1.21/24"}
+ha3: "Aruba AP #3" { wlan0: "eno1\n192.168.1.22/24"}
+
+# ── cables: each lands on a specific port row → specific NIC ───
+router.eno1     -> netgear.p1: "trunk: 1,10,20,30,40" { class: trunk }
+netgear.p2 -> cm220-1.cimc { class: v10 }
+netgear.p3 -> cm220-1.eno1    { class: v10 }
+netgear.p4 -> cm220-2.cimc { class: v10 }
+netgear.p5 -> cm220-2.eno1    { class: v10 }
+netgear.p7 -> node2.ilo  { class: v1}  # host runs 2 VLANs over 1 NIC
+netgear.p8 -> node2.eno1    { class: trunk}
+netgear.p9 -> node1.eno1    { class: trunk}
+netgear.p10 -> console.eth0    { class: v1}
+router.eno2 -> dlink.a1: "trunk: 20" { class: trunk }
+dlink.a2   -> ha1.wlan0     { class: v20 }
+dlink.a3   -> ha2.wlan0     { class: v20 }
+dlink.a4   -> ha3.wlan0   { class: v20 }
+dlink.a2   -> ha1.wlan0     { class: trunk }
+dlink.a3   -> ha2.wlan0     { class: trunk }
+dlink.a4   -> ha3.wlan0   { class: trunk }
+
+
+# ── VLAN legend ───────────────────────────────────────────────
+vlans: VLANs {
+  near: top-left
+  grid-columns: 1
+  x1:  "VLAN 1  · mgmt      · 192.168.1.0/24"   { class: v1 }
+  x10: "VLAN 10 · trusted   · 192.168.10.0/24"  { class: v10 }
+  x20: "VLAN 20 · iot       · 192.168.20.0/24"  { class: v20 }
+  x30: "VLAN 30 · guest     · 192.168.30.0/24"  { class: v30 }
+  x40: "VLAN 40 · monitoring· 192.168.40.0/24"  { class: v40 }
+  xt:  "trunk (multiple VLANs)"                  { class: trunk }
+}

@@ -5,7 +5,7 @@ mkdir -p ~/.config/sops/age
 age-keygen -o ~/.config/sops/age/keys.txt
 
 ssh into machine then grab the ssh key after exiting it again 
-
+nix-shell -p sops age ssh-to-age
 ssh-keyscan -t ed25519 123.456.789.123 2>/dev/null | ssh-to-age
 
 

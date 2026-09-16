@@ -1,7 +1,40 @@
 {...}: {
   services.teleport = {
+    insecure.enable = true;
     enable = true;
     settings = {
+      app_service = {
+        enabled = true;
+        apps = [
+          # web consoles (HTTP apps)
+          {
+            name = "idrac-r640";
+            uri = "https://192.168.1.137";
+            insecure_skip_verify = true;
+          }
+          {
+            name = "ilo-dl380";
+            uri = "https://10.0.10.51";
+            insecure_skip_verify = true;
+          }
+          {
+            name = "cimc-ucs-1";
+            uri = "https://192.168.1.220";
+            insecure_skip_verify = true;
+          }
+
+          # SSH CLIs (TCP apps)
+          {
+            name = "idrac-r640-ssh";
+            uri = "tcp://192.168.1.137:22";
+          }
+          {
+            name = "sw-core-ssh";
+            uri = "tcp://10.0.10.2:22";
+          }
+        ];
+      };
+
       version = "v3";
       teleport = {
         nodename = "teleport-server";

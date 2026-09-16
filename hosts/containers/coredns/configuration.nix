@@ -3,6 +3,11 @@
     enable = true;
     config = ''
       home.arpa {
+        template IN A home.arpa {
+          match "^.+\.teleport\.home\.arpa\.$"
+          answer "{{ .Name }} 60 IN A 192.168.1.11"
+          fallthrough
+        }
         hosts {
           192.168.1.10  caddy.home.arpa
           192.168.1.11  teleport.home.arpa

@@ -1,123 +1,200 @@
 # hosts.nix
 #
 # ─────────────────────────────────────────────────────────────────────────
-# HOST OPTIONS — every key a host attrset can carry
+# HOST OPTIONS — every key a host attrset can carry (the module reads these
+# off `host.*`; anything not listed here isn't read)
 # ─────────────────────────────────────────────────────────────────────────
-# The module reads these off `host.*`. Anything not listed here isn't read.
-#
-#   hostname         string    machine's hostname (mkHost sets this from the
-#                              attr name for you; don't pass it manually)
-#   incus            bool      enable the Incus guest agent (true for all
-#                              containers here)
+#   hostname         string    machine's hostname. Must match the attr name.
+#   incus            bool      Incus GUEST agent (true for containers/VMs)
+#   incusHost        bool      Incus DAEMON (true for bare-metal nodes)
 #   timeZone         string    e.g. "Asia/Tokyo"
-#   defaultGateway   string    single default route, host-global, one per host
-#                              even on multi-NIC boxes
-#   nameservers      list      resolver list, e.g. ["192.168.1.1"] — LIST, not
-#                              a bare string (module passes it through unwrapped)
+#   defaultGateway   string    single default route, one per host
+#   nameservers      list      e.g. ["192.168.1.1"] — LIST, not a bare string
 #   allowedTCPPorts  list      firewall, e.g. [80 443]
 #   allowedUDPPorts  list      firewall, e.g. [53]
 #   interfaces       attrset   keyed BY interface name; each value is
 #                                { address = "x.x.x.x"; prefixLength = N; }
+#   bridges          attrset   keyed BY bridge name; value is a LIST of NICs
+#                                enslaved to it, e.g. { br0 = ["eno1"]; }.
+#                                The bridge's IP lives in interfaces.<bridge>;
+#                                enslaved NICs must NOT appear in interfaces.
 #
 # ─────────────────────────────────────────────────────────────────────────
-# mkHost — sugar for the common single-NIC case
+# WRITING A HOST — just spread `defaults` and override what differs
 # ─────────────────────────────────────────────────────────────────────────
-# Takes `ip`, `interface`, `prefixLength` as flat scalars and folds them into
-# a one-entry `interfaces` attrset. Everything unspecified comes from
-# `defaults`. Only pass the keys that DIFFER from defaults:
+# `defaults` covers the boring shared keys. Each host states only what's
+# interesting: its name, its IP (on whichever interface), and any port/flag
+# it changes. `//` replaces a whole key, so listing allowedTCPPorts drops
+# the default list entirely (that's intended).
 #
-#   foo = mkHost "foo" { ip = "192.168.1.99"; };              # fully standard
-#   bar = mkHost "bar" { ip = "192.168.1.98";                 # overrides ports
-#                        allowedTCPPorts = [22]; };
-#
-# ─────────────────────────────────────────────────────────────────────────
-# MULTI-INTERFACE host — bypass mkHost, write `interfaces` directly
-# ─────────────────────────────────────────────────────────────────────────
-# mkHost is single-NIC by design. For a box with 2+ NICs, merge `defaults`
-# yourself and give `interfaces` explicitly. Omit ip/interface/prefixLength —
-# they only exist to feed mkHost. Still ONE defaultGateway.
-#
-#   gateway = defaults // {
-#     hostname = "gateway";
-#     interfaces = {
-#       eth0 = { address = "192.168.1.1"; prefixLength = 24; };
-#       eth1 = { address = "10.0.0.1";    prefixLength = 24; };
+#   Container / VM:
+#     foo = defaults // {
+#       hostname = "foo";
+#       interfaces.enp5s0 = { address = "192.168.1.99"; prefixLength = 24; };
 #     };
-#     defaultGateway = "192.168.1.1";      # still just one
-#     allowedTCPPorts = [22 80 443];
-#   };
 #
-# (The leftover `interface`/`prefixLength` scalars from `defaults` linger on
-#  the result but are harmless — the module never reads them, only reads
-#  `interfaces`. removeAttrs them if you want it tidy.)
+#   Bare-metal Incus node (IP on br0, one NIC enslaved):
+#     node = defaults // {
+#       hostname = "node";
+#       incus = false; incusHost = true;
+#       allowedTCPPorts = [8443];
+#       interfaces.br0 = { address = "192.168.1.100"; prefixLength = 24; };
+#       bridges.br0 = ["eno1"];
+#     };
+#
+# The enslaved NIC lives ONLY in `bridges`, never in `interfaces` — the IP
+# rides the bridge, not the raw member.
+#
+# ─────────────────────────────────────────────────────────────────────────
+# ⚠ BACKEND CAVEAT for the bare-metal nodes
+# ─────────────────────────────────────────────────────────────────────────
+# This module uses the SCRIPTED backend (networking.bridges/interfaces). The
+# nodes also carry the 10GbE inter-node link via MAC-matched networkd. Two
+# backends on one host is fragile — before deploying br0 to a headless node,
+# confirm they coexist, or move the LAN bridge into networkd and drop it here.
 # ─────────────────────────────────────────────────────────────────────────
 let
-  # Shared defaults. Per-host attrs override these.
+  # Shared defaults. Each host spreads these and overrides what differs.
   defaults = {
-    prefixLength = 24;
     nameservers = ["192.168.1.1"];
     defaultGateway = "192.168.1.1";
     timeZone = "Asia/Tokyo";
     allowedTCPPorts = [8080 2022 80 443];
     allowedUDPPorts = [];
-    incus = true;
-    interface = "enp5s0";
+    incus = true; # guest agent (container/VM) — nodes flip this
+    incusHost = false;
   };
-
-  # Merge defaults, fold ip/interface/prefixLength into interfaces,
-  # then drop those scalar keys from the result.
-  mkHost = name: attrs: let
-    merged = defaults // attrs;
-  in
-    (removeAttrs merged ["ip" "interface" "prefixLength"])
+in {
+  # ── Containers (guest agent, single NIC) ────────────────────────────────
+  caddy =
+    defaults
     // {
-      hostname = name;
-      interfaces.${merged.interface} = {
-        address = merged.ip;
-        inherit (merged) prefixLength;
+      hostname = "caddy";
+      interfaces.enp5s0 = {
+        address = "192.168.1.10";
+        prefixLength = 24;
       };
     };
-in {
-  caddy = mkHost "caddy" {ip = "192.168.1.10";};
-  pelican = mkHost "pelican" {ip = "192.168.1.50";};
-  pelican-wings = mkHost "pelican-wings" {ip = "192.168.1.51";};
-  vaultwarden = mkHost "vaultwarden" {ip = "192.168.1.53";};
 
-  coredns = mkHost "coredns" {
-    ip = "192.168.1.15";
-    interface = "eth0";
-    allowedTCPPorts = [53];
-    allowedUDPPorts = [53];
-  };
+  pelican =
+    defaults
+    // {
+      hostname = "pelican";
+      interfaces.enp5s0 = {
+        address = "192.168.1.50";
+        prefixLength = 24;
+      };
+    };
 
-  teleport = mkHost "teleport" {
-    ip = "192.168.1.11";
-    interface = "eth0";
-    allowedTCPPorts = [80 3080 443];
-    allowedUDPPorts = [80 3080 443];
-  };
-  cm220-1 = mkHost "cm220-1" {
-    ip = "192.168.1.98";
-    interface = "enp1s0f0";
-    allowedTCPPorts = [];
-    allowedUDPPorts = [];
-  };
-  cm220-2 = mkHost "cm220-2" {
-    ip = "192.168.1.97";
-    interface = "enp1s0f0";
-    allowedTCPPorts = [];
-    allowedUDPPorts = [];
-  };
-  node1 = mkHost "node1" {
-    ip = "192.168.1.100";
-    interface = "eno1";
-    allowedTCPPorts = [];
-    allowedUDPPorts = [];
-  };
-  node2 = mkHost "node2" {
-    ip = "192.168.1.99";
-    interface = "1enp3s0f0";
-    allowedTCPPorts = [];
-    allowedUDPPorts = [];
-  };
+  pelican-wings =
+    defaults
+    // {
+      hostname = "pelican-wings";
+      interfaces.enp5s0 = {
+        address = "192.168.1.51";
+        prefixLength = 24;
+      };
+    };
+
+  vaultwarden =
+    defaults
+    // {
+      hostname = "vaultwarden";
+      interfaces = {
+        enp5s0 = {
+          address = "192.168.1.53";
+          prefixLength = 24;
+        }; # native VLAN, untagged
+        net20 = {
+          address = "192.168.20.2";
+          prefixLength = 24;
+        }; # tagged VLAN 20
+      };
+      vlans = {
+        net20 = {
+          id = 20;
+          interface = "enp5s0";
+        };
+      };
+    }; # ← this closer was missing
+
+  coredns =
+    defaults
+    // {
+      hostname = "coredns";
+      interfaces.eth0 = {
+        address = "192.168.1.15";
+        prefixLength = 24;
+      };
+      allowedTCPPorts = [53];
+      allowedUDPPorts = [53];
+    };
+
+  teleport =
+    defaults
+    // {
+      hostname = "teleport";
+      interfaces.eth0 = {
+        address = "192.168.1.11";
+        prefixLength = 24;
+      };
+      allowedTCPPorts = [80 3080 443];
+      allowedUDPPorts = [80 3080 443];
+    };
+
+  # ── Bare-metal Incus cluster nodes (daemon, LAN-bridged via br0) ─────────
+  node1 =
+    defaults
+    // {
+      hostname = "node1";
+      incus = false;
+      incusHost = true;
+      allowedTCPPorts = [8443];
+      interfaces.br0 = {
+        address = "192.168.1.100";
+        prefixLength = 24;
+      };
+      bridges.br0 = ["eno1"];
+    };
+
+  node2 =
+    defaults
+    // {
+      hostname = "node2";
+      incus = false;
+      incusHost = true;
+      allowedTCPPorts = [8443];
+      interfaces.br0 = {
+        address = "192.168.1.99";
+        prefixLength = 24;
+      };
+      bridges.br0 = ["FIXME"]; # ip link on node2 — real LAN NIC name (was "" = bug)
+    };
+  cm220-1 =
+    defaults
+    // {
+      hostname = "cm220-1";
+      incus = false;
+      incusHost = true;
+      allowedTCPPorts = [8443];
+      interfaces.br0 = {
+        address = "192.168.1.98";
+        prefixLength = 24;
+      };
+      bridges.br0 = ["enp1s0f0"];
+    };
+
+  cm220-2 =
+    defaults
+    // {
+      hostname = "cm220-2";
+      incus = false;
+      incusHost = true;
+      allowedTCPPorts = [8443];
+      interfaces.br0 = {
+        address = "192.168.1.97";
+        prefixLength = 24;
+      };
+      bridges.br0 = ["enp1s0f0"];
+    };
 }
