@@ -109,7 +109,7 @@ in {
         net20 = {
           address = "192.168.20.2";
           prefixLength = 24;
-          allowedTCPPorts = [8123];
+          allowedTCPPorts = [8123 6052];
         }; # tagged VLAN 20
       };
       vlans = {

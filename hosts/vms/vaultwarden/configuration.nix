@@ -18,7 +18,7 @@
   };
   services.esphome = {
     enable = true;
-    address = "0.0.0.0";
+    address = "192.168.20.2";
     openFirewall = true;
   };
   # --- CONTAINERS CONFIGURATION ---
