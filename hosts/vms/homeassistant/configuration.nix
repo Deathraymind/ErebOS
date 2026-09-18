@@ -4,6 +4,7 @@
   lib,
   ...
 }: {
+  services.sshd.enable = true;
   imports = [];
   virtualisation.diskSize = lib.mkForce 30480;
   # --- USER CONFIGURATION ---
