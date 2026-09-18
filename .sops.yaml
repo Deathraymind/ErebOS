@@ -1,5 +1,6 @@
 keys:
   - &deathraymind age1psgzl6fsfu8397ezxuryzyutuw8vdzsehkemjxwqdajl4cf3fpksl3974a
+  - &deathraymind-laptop age1jpschppfqdrzgm4z5nt9kyr3gmwq3su0lytg0mu6k34yyestjvsqrs5z2f
   - &pelican_host age1gm6tu8xs9ktcv3rfs5mdn0jt9nz53vtaatppx74nee4h98tx5spq32ngy2
   - &caddy_host age18w9vcsfhpsh7ds6mn34ettdwwp7xsjuh8cm9kuce0gmpgdf9qv8s204p3n
   - &wings age1jpgjh3d4qh7psy66nnj702ua242age3x92ryf7s0lq00djuv3s3spceep4
@@ -12,11 +13,13 @@ keys:
   - &cm220-2 age12ajsr6z68wd7w4pespk6uyk44twnfvx58t2skds83plj0skhzpusvhah04
   - &node1 age1wvh4s7xf8fa6gqz7ztdzjcc3s6jcjcxda8ye4awfzhueyzfmxensau3ntx
   - &vaultwarden age1nrsdgldpxjruswu8f2q4rew6ju3swvkr4l75qe54zhat8lys83zq53hcp0
+  - &vaultwardeni age16y5ekahqe90us9xwm2gs8jmrrkuuhn7fu9q8p2wsxjywrk4fqv9s8m7v79
 creation_rules:
   - path_regex: secrets/pelican\.yaml$
     key_groups:
       - age:
           - *deathraymind
+          - *deathraymind-laptop
           - *pelican_host
           - *caddy_host
           - *wings
@@ -28,6 +31,7 @@ creation_rules:
           - *cm220-2
           - *node1
           - *vaultwarden
+          - *vaultwardeni
   - path_regex: secrets/monitoring\.yaml$
     key_groups:
       - age:

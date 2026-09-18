@@ -7,7 +7,6 @@
   boot.initrd.systemd.emergencyAccess = true;
   boot.growPartition = true; # Automatically expands to fit Proxmox disk resizes
   fileSystems."/".autoResize = true;
-  services.qemuGuest.enable = true;
   # Nix
   nix.settings = {
     experimental-features = ["nix-command" "flakes"];
@@ -15,11 +14,6 @@
   };
 
   # Virtualisation
-  virtualisation.libvirtd.enable = true;
-  virtualisation.spiceUSBRedirection.enable = true;
-  programs.virt-manager.enable = true;
-  boot.supportedFilesystems = ["nfs"];
-  services.rpcbind.enable = true;
   # Networking
 
   # SSH
