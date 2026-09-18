@@ -27,40 +27,6 @@
   virtualisation.oci-containers = {
     backend = "docker";
     containers = {
-      vaultwarden = {
-        image = "vaultwarden/server:latest";
-        ports = ["8443:80"];
-        volumes = ["/var/lib/vaultwarden:/data"];
-        environment = {
-          DOMAIN = "https://vaultwarden.deathraymind.net";
-          SIGNUPS_ALLOWED = "true"; # Switch to "false" after setup
-        };
-        autoStart = true;
-      };
-
-      uptimekuma = {
-        image = "louislam/uptime-kuma:1";
-        ports = ["3001:3001"];
-        volumes = ["/var/lib/uptime-kuma:/app/data"];
-        autoStart = true;
-      };
-
-      #adguardhome = {
-      #image = "adguard/adguardhome:latest";
-      #ports = [
-      #"53:53/tcp"
-      #"53:53/udp" # DNS
-      #"3000:3000/tcp"
-      #"80:80/tcp" # Web UI Setup / Dashboard
-      #"443:443/tcp"
-      #"853:853/tcp" # Encrypted DNS (Optional)
-      #];
-      #volumes = [
-      #"/var/lib/adguardhome/work:/opt/adguardhome/work"
-      #"/var/lib/adguardhome/conf:/opt/adguardhome/conf"
-      #  ];
-      #autoStart = true;
-      #};
       homeassistant = {
         image = "ghcr.io/home-assistant/home-assistant:stable";
         volumes = [
@@ -86,15 +52,7 @@
 
   # --- SYSTEM NETWORKING & STORAGE ---
   networking.firewall = {
-    allowedTCPPorts = [53 3000 80 443 853 8123];
-    allowedUDPPorts = [53 5353];
+    allowedTCPPorts = [8123];
+    allowedUDPPorts = [];
   };
-
-  systemd.tmpfiles.rules = [
-    "d /var/lib/adguardhome/work 0755 root root -"
-    "d /var/lib/adguardhome/conf 0755 root root -"
-    "d /var/lib/adguardhome/work 0755 root root -"
-    "d /var/lib/adguardhome/conf 0755 root root -"
-    "d /var/lib/hass 0755 root root -"
-  ];
 }

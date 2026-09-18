@@ -215,7 +215,7 @@
         ./hosts/vms/vaultwarden/configuration.nix
         ./modules/common/teleport.nix
         ./modules/common/networking.nix
-        ./modules/vms/hardware-configuration.nix
+        ./modules/vms/incus-hardware.nix
         ./modules/common/common.nix
 
         inputs.sops-nix.nixosModules.sops

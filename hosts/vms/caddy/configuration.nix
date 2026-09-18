@@ -94,7 +94,7 @@
       useACMEHost = "deathraymind.net";
       extraConfig = ''
         # Point Caddy directly to your Nix-Nas IP and Vaultwarden port
-        reverse_proxy http://192.168.1.53:8443
+        reverse_proxy http://192.168.50.12:8443
 
         # Tell Caddy to use the certificate files managed by your NixOS ACME configuration
       '';
