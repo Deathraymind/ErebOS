@@ -72,6 +72,10 @@
   services.caddy = {
     enable = true;
 
+    globalConfig = ''
+      default_bind 192.168.50.20
+    '';
+
     virtualHosts."n8n.deathraymind.net" = {
       useACMEHost = "deathraymind.net"; # This automatically configures permissions and links the certs!
       extraConfig = ''
@@ -105,12 +109,12 @@
     virtualHosts."panel.deathraymind.net" = {
       useACMEHost = "deathraymind.net";
       extraConfig = ''
-        reverse_proxy http://192.168.1.50:80
+        reverse_proxy http://192.168.50.10:80
       '';
     };
 
     virtualHosts."node1.deathraymind.net".extraConfig = ''
-      reverse_proxy http://192.168.1.51:8080
+      reverse_proxy http://192.168.50.11:8080
       tls /var/lib/acme/deathraymind.net/fullchain.pem /var/lib/acme/deathraymind.net/key.pem {
         protocols tls1.3
       }

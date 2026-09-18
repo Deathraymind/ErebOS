@@ -70,36 +70,77 @@ in {
     defaults
     // {
       hostname = "caddy";
-      interfaces.enp5s0 = {
-        address = "192.168.1.10";
-        prefixLength = 24;
+      interfaces = {
+        enp5s0 = {
+          address = "192.168.1.10";
+          prefixLength = 24;
+          allowedTCPPorts = [443]; # ssh, LAN only
+        }; # native VLAN, untagged
+        net50 = {
+          address = "192.168.50.20";
+          prefixLength = 24;
+          allowedTCPPorts = [443];
+        }; # tagged VLAN 20
       };
-    };
+      vlans = {
+        net50 = {
+          id = 50;
+          interface = "enp5s0";
+        };
+      };
+    }; # ← this closer was missing
 
   pelican =
     defaults
     // {
       hostname = "pelican";
-      interfaces.enp5s0 = {
-        address = "192.168.1.50";
-        prefixLength = 24;
+      interfaces = {
+        enp5s0 = {
+          address = "192.168.1.50";
+          prefixLength = 24;
+          allowedTCPPorts = [];
+        };
+        net50 = {
+          address = "192.168.50.10";
+          prefixLength = 24;
+          allowedTCPPorts = [80 443];
+        };
+      };
+      vlans = {
+        net50 = {
+          id = 50;
+          interface = "enp5s0";
+        };
       };
     };
-
   pelican-wings =
     defaults
     // {
       hostname = "pelican-wings";
-      interfaces.enp5s0 = {
-        address = "192.168.1.51";
-        prefixLength = 24;
+      interfaces = {
+        enp5s0 = {
+          address = "192.168.1.51";
+          prefixLength = 24;
+          allowedTCPPorts = [];
+        };
+        net50 = {
+          address = "192.168.50.11";
+          prefixLength = 24;
+          allowedTCPPorts = [2022 8080];
+        };
+      };
+      vlans = {
+        net50 = {
+          id = 50;
+          interface = "enp5s0";
+        };
       };
     };
 
-  vaultwarden =
+  homeassistant =
     defaults
     // {
-      hostname = "vaultwarden";
+      hostname = "homeassistant";
       interfaces = {
         enp5s0 = {
           address = "192.168.1.53";
@@ -115,6 +156,29 @@ in {
       vlans = {
         net20 = {
           id = 20;
+          interface = "enp5s0";
+        };
+      };
+    }; # ← this closer was missing
+  vaultwarden =
+    defaults
+    // {
+      hostname = "homeassistant";
+      interfaces = {
+        enp5s0 = {
+          address = "192.168.1.54";
+          prefixLength = 24;
+          allowedTCPPorts = []; # ssh, LAN only
+        }; # native VLAN, untagged
+        net20 = {
+          address = "192.168.50.12";
+          prefixLength = 24;
+          allowedTCPPorts = [80 8443];
+        }; # tagged VLAN 20
+      };
+      vlans = {
+        net50 = {
+          id = 50;
           interface = "enp5s0";
         };
       };

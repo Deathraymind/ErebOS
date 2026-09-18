@@ -4,21 +4,6 @@
   config,
   ...
 }: {
-  virtualisation.docker = {
-    enable = true;
-    # Set up resource limits
-    daemon.settings = {
-      experimental = true;
-      dns = ["1.1.1.1" "8.8.8.8"];
-      default-address-pools = [
-        {
-          base = "172.30.0.0/16";
-          size = 24;
-        }
-      ];
-    };
-  };
-
   users.users.bowyn = {
     isNormalUser = true;
     extraGroups = ["wheel" "docker"];
@@ -69,7 +54,7 @@
   };
   services.pelican.wings = {
     enable = true;
-    openFirewall = true;
+    openFirewall = false;
     uuid = "08b12380-dd90-4c19-8744-df6493a20121";
     remote = "https://panel.deathraymind.net";
     tokenIdFile = config.sops.secrets."pelican/tokenIdFile".path;

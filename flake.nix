@@ -225,6 +225,22 @@
         host = hosts.vaultwarden;
       };
     };
+    nixosConfigurations.homeassistant = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        ./hosts/vms/homeassistant/configuration.nix
+        ./modules/common/teleport.nix
+        ./modules/common/networking.nix
+        ./modules/vms/hardware-configuration.nix
+        ./modules/common/common.nix
+
+        inputs.sops-nix.nixosModules.sops
+      ];
+      specialArgs = {
+        inherit inputs;
+        host = hosts.vaultwarden;
+      };
+    };
     nixosConfigurations.pelican = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [

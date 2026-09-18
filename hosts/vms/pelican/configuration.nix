@@ -7,21 +7,7 @@
   imports = [
     # ../../containers/.nix
   ];
-  virtualisation.docker = {
-    enable = true;
-    # Set up resource limits
-    daemon.settings = {
-      experimental = true;
-      dns = ["1.1.1.1" "8.8.8.8"];
-      default-address-pools = [
-        {
-          base = "172.30.0.0/16";
-          size = 24;
-        }
-      ];
-    };
-  };
-
+  services.nginx.defaultListenAddresses = ["192.168.50.10"];
   users.users.bowyn = {
     isNormalUser = true;
     extraGroups = ["wheel" "docker"];
