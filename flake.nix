@@ -238,7 +238,7 @@
       ];
       specialArgs = {
         inherit inputs;
-        host = hosts.vaultwarden;
+        host = hosts.homeassistant;
       };
     };
     nixosConfigurations.pelican = nixpkgs.lib.nixosSystem {
