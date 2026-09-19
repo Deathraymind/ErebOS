@@ -207,7 +207,17 @@ in {
       allowedTCPPorts = [80 3080 443];
       allowedUDPPorts = [80 3080 443];
     };
-
+  rackpeek =
+    defaults
+    // {
+      hostname = "rackpeek";
+      interfaces.eth0 = {
+        address = "192.168.1.40";
+        prefixLength = 24;
+      };
+      allowedTCPPorts = [8080];
+      allowedUDPPorts = [8080];
+    };
   # ── Bare-metal Incus cluster nodes (daemon, LAN-bridged via br0) ─────────
   node1 =
     defaults

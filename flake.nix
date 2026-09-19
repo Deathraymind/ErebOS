@@ -193,6 +193,18 @@
         host = hosts.teleport;
       };
     };
+    nixosConfigurations.rackpeek = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        ./hosts/containers/rackpeek/configuration.nix
+        ./modules/common/networking.nix
+        ./modules/containers/common.nix
+      ];
+      specialArgs = {
+        inherit inputs;
+        host = hosts.rackpeek;
+      };
+    };
 
     # nixosConfigurations.caddy-sylvath = nixpkgs.lib.nixosSystem {
     # system = "x86_64-linux";
