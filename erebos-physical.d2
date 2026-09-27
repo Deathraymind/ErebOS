@@ -1,99 +1,140 @@
 # ══════════════════════════════════════════════════════════════
-#  erebos — PHYSICAL layer: port ↔ interface map + VLAN colouring
-#  render: d2 --layout elk --theme 200 erebos-physical.d2 out.svg
-#nix run nixpkgs#d2 -- --watch -p 8080 --browser 0 --layout elk --theme 200 erebos-physical.d2
-#  NOTE: network is a flat 192.168.1.0/24 today. VLAN IDs/subnets
-#  below are a PROPOSED segmentation mapped onto your trust tiers.
+#  erebos — network map: physical ports + logical Incus guests
+#  render: d2 --layout elk --theme 200 erebos-network.d2 out.svg
+#  watch:  nix run nixpkgs#d2 -- --watch -p 8080 --layout elk --theme 200 erebos-physical.d2
+#
+#  IPs cross-checked against hosts.nix. VLANs LIVE today: 1 (native/LAN),
+#  20 (iot), 50 (services). The 10/30/40 rows are still the PROPOSED
+#  segmentation — not deployed. (Header note "flat /24 today" was stale:
+#  VLAN 20 + 50 are already carried on the host trunks.)
 # ══════════════════════════════════════════════════════════════
 
 direction: right
 
 # ── one colour per VLAN (edit once) ───────────────────────────
 classes: {
-  v1:    { style: { stroke: "#e05d44"; stroke-width: 2 } }  # mgmt
-  v10:   { style: { stroke: "#4a90d9"; stroke-width: 2 } }  # trusted
-  v20:   { style: { stroke: "#e8a33d"; stroke-width: 2; stroke-dash: 4 } }  # iot
-  v30:   { style: { stroke: "#8a8a8a"; stroke-width: 2 } }  # guest
-  v40:   { style: { stroke: "#b05cc9"; stroke-width: 2 } }  # monitoring
-  trunk: { style: { stroke: "#2f9e44"; stroke-width: 3 } }  # carries many VLANs
+  v1:    { style: { stroke: "#e05d44"; stroke-width: 2 } }                      # mgmt / native LAN  192.168.1.0/24
+  v10:   { style: { stroke: "#4a90d9"; stroke-width: 2 } }                      # trusted (proposed)
+  v20:   { style: { stroke: "#e8a33d"; stroke-width: 2; stroke-dash: 4 } }      # iot        192.168.20.0/24
+  v30:   { style: { stroke: "#8a8a8a"; stroke-width: 2 } }                      # guest (proposed)
+  v40:   { style: { stroke: "#b05cc9"; stroke-width: 2 } }                      # monitoring (proposed)
+  v50:   { style: { stroke: "#1098ad"; stroke-width: 2; stroke-dash: 4 } }      # services   192.168.50.0/24
+  trunk: { style: { stroke: "#2f9e44"; stroke-width: 3 } }                      # carries many VLANs
 }
 
 # ── edge gateway ──────────────────────────────────────────────
-router: Wireless router\n(OpenWRT)
+router: "Wireless router\n(OpenWRT)"
 
 # ── core switch: one row per patched port ─────────────────────
 netgear: NETGEAR core switch {
   shape: sql_table
-  p1: "router uplink"     { constraint: trunk }
-  p2: "cm220-1: cimc"    { constraint: v1 }
-  p3: "cm220-1 : eno1"      { constraint: trunk}
-  p4: "cm220-2 : cimc"      { constraint: v1 }
-  p5: "cm220-2 : eno1"      { constraint: trunk}
-  p7: "node2 : ilo"      { constraint: v1}
-  p8: "node2 : eno1"      { constraint: trunk }
-  p9: "node1 :eno1"      { constraint: trunk }
-  p10: "console :eth0"      { constraint: v1 }
+  p1:  "router uplink"    { constraint: trunk }
+  p2:  "cm220-1 : cimc"   { constraint: v1 }
+  p3:  "cm220-1 : eno1"   { constraint: trunk }
+  p4:  "cm220-2 : cimc"   { constraint: v1 }
+  p5:  "cm220-2 : eno1"   { constraint: trunk }
+  p7:  "node2 : ilo"      { constraint: v1 }
+  p8:  "node2 : eno1"     { constraint: trunk }
+  p9:  "node1 : eno1"     { constraint: trunk }
+  p10: "console : eth0"   { constraint: v1 }
 }
 
 # ── IoT edge switch ───────────────────────────────────────────
 dlink: D-Link switch {
   shape: sql_table
-  a1: "netgear uplink"    { constraint: trunk }
-  a2: "HA #1 : wlan0"     { constraint: v20 }
-  a3: "HA #2 : wlan0"     { constraint: v20 }
-  a4: "HA #3 : wlan0"     { constraint: v20 }
+  a1: "router uplink (eno2)" { constraint: trunk }
+  a2: "AP #1 uplink"         { constraint: trunk }
+  a3: "AP #2 uplink"         { constraint: trunk }
+  a4: "AP #3 uplink"         { constraint: trunk }
 }
 
 # ── physical hosts (boxes with real NICs) ─────────────────────
 cm220-1: cm220-1 {
-  cimc: "cimc\n192.168.1.31/24"
-  eno1: "eno1\n192.168.1.98/24"
+  cimc: "cimc\n192.168.1.31/24"          { class: v1 }
+  eno1: "enp1s0f0 (br0)\n192.168.1.98/24" { class: trunk }   # nix NIC = enp1s0f0
 }
 cm220-2: cm220-2 {
-  cimc: "cimc\n192.168.1.32/24"
-  eno1: "eno1\192.168.1.97/24"
+  cimc: "cimc\n192.168.1.32/24"          { class: v1 }
+  eno1: "enp1s0f0 (br0)\n192.168.1.97/24" { class: trunk }   # nix NIC = enp1s0f0
 }
 console: "console (RPi)" {
-  eth0: "eth0\n192.168.1.21/24"
+  eth0: "eth0\n192.168.1.21/24  ⚠ dup" { class: v1 }
 }
 node1: node1 {
-  eno1: "eno1\n192.168.1.100/24"
+  eno1: "eno1 (br0)\n192.168.1.100/24" { class: trunk }
 }
 node2: node2 {
-  ilo: "cimc\n192.168.1.36/24"
-  eno1: "eno1\192.168.1.99/24"
+  ilo:  "ilo/cimc\n192.168.1.36/24"    { class: v1 }
+  eno1: "eno1 (br0)\n192.168.1.99/24"  { class: trunk }      # nix bridges.br0 = FIXME → set to eno1
 }
-ha1: "Aruba AP #1"   { wlan0: "eno1\n192.168.1.20/24" }
-ha2: "Aruba AP #2"   { wlan0: "eno1\n192.168.1.21/24"}
-ha3: "Aruba AP #3" { wlan0: "eno1\n192.168.1.22/24"}
+ha1: Aruba AP #1  { eth0: "eth0\n192.168.1.20/24"       { class: trunk } }
+ha2: Aruba AP #2  { eth0: "eth0\n192.168.1.21/24  ⚠ dup" { class: trunk } }
+ha3: Aruba AP #3  { eth0: "eth0\n192.168.1.22/24"       { class: trunk } }
 
-# ── cables: each lands on a specific port row → specific NIC ───
-router.eno1     -> netgear.p1: "trunk: 1,10,20,30,40" { class: trunk }
-netgear.p2 -> cm220-1.cimc { class: v10 }
-netgear.p3 -> cm220-1.eno1    { class: v10 }
-netgear.p4 -> cm220-2.cimc { class: v10 }
-netgear.p5 -> cm220-2.eno1    { class: v10 }
-netgear.p7 -> node2.ilo  { class: v1}  # host runs 2 VLANs over 1 NIC
-netgear.p8 -> node2.eno1    { class: trunk}
-netgear.p9 -> node1.eno1    { class: trunk}
-netgear.p10 -> console.eth0    { class: v1}
+# ── logical: Incus guests ─────────────────────────────────────
+#   Placement is NOT encoded in hosts.nix, so the guests are drawn as a
+#   pool riding the cluster's br0 trunks (correct for a live cluster —
+#   any guest can sit on any node / migrate).
+#   To pin a guest to one node, drop the cluster->node edges and draw e.g.:
+#       cm220-1.eno1 -> guests.caddy
+guests: "Incus guests\n(float across node1 · node2 · cm220-1 · cm220-2)" {
+  style.stroke-dash: 3
+
+  caddy: caddy {
+    enp5s0: "enp5s0\n192.168.1.10/24"            { class: v1 }
+    net50:  "net50 · VLAN 50\n192.168.50.20/24"  { class: v50 }
+  }
+  pelican: pelican {
+    enp5s0: "enp5s0\n192.168.1.50/24"            { class: v1 }
+    net50:  "net50 · VLAN 50\n192.168.50.10/24"  { class: v50 }
+  }
+  pelican-wings: pelican-wings {
+    enp5s0: "enp5s0\n192.168.1.51/24"            { class: v1 }
+    net50:  "net50 · VLAN 50\n192.168.50.11/24"  { class: v50 }
+  }
+  homeassistant: homeassistant {
+    enp5s0: "enp5s0\n192.168.1.53/24"            { class: v1 }
+    net20:  "net20 · VLAN 20\n192.168.20.2/24"   { class: v20 }
+  }
+  vaultwarden: vaultwarden {
+    enp5s0: "enp5s0\n192.168.1.54/24"            { class: v1 }
+    net50:  "net50 · VLAN 50\n192.168.50.12/24"  { class: v50 }   # nix names this iface net20 (bug)
+  }
+  coredns:  coredns  { eth0: "eth0\n192.168.1.15/24" { class: v1 } }
+  teleport: teleport { eth0: "eth0\n192.168.1.11/24" { class: v1 } }
+  rackpeek: rackpeek { eth0: "eth0\n192.168.1.40/24" { class: v1 } }
+}
+
+# ── cables: physical ──────────────────────────────────────────
+router.eno1 -> netgear.p1: "trunk: 1,20,50" { class: trunk }
+netgear.p2  -> cm220-1.cimc  { class: v1 }
+netgear.p3  -> cm220-1.eno1  { class: trunk }
+netgear.p4  -> cm220-2.cimc  { class: v1 }
+netgear.p5  -> cm220-2.eno1  { class: trunk }
+netgear.p7  -> node2.ilo     { class: v1 }
+netgear.p8  -> node2.eno1    { class: trunk }
+netgear.p9  -> node1.eno1    { class: trunk }
+netgear.p10 -> console.eth0  { class: v1 }
 router.eno2 -> dlink.a1: "trunk: 20" { class: trunk }
-dlink.a2   -> ha1.wlan0     { class: v20 }
-dlink.a3   -> ha2.wlan0     { class: v20 }
-dlink.a4   -> ha3.wlan0   { class: v20 }
-dlink.a2   -> ha1.wlan0     { class: trunk }
-dlink.a3   -> ha2.wlan0     { class: trunk }
-dlink.a4   -> ha3.wlan0   { class: trunk }
+dlink.a2 -> ha1.eth0 { class: trunk }
+dlink.a3 -> ha2.eth0 { class: trunk }
+dlink.a4 -> ha3.eth0 { class: trunk }
 
+# ── guests bridge onto each node's br0 (LAN trunk) ────────────
+guests -> node1.eno1   { class: trunk }
+guests -> node2.eno1   { class: trunk }
+guests -> cm220-1.eno1 { class: trunk }
+guests -> cm220-2.eno1 { class: trunk }
 
 # ── VLAN legend ───────────────────────────────────────────────
 vlans: VLANs {
   near: top-left
   grid-columns: 1
-  x1:  "VLAN 1  · mgmt      · 192.168.1.0/24"   { class: v1 }
-  x10: "VLAN 10 · trusted   · 192.168.10.0/24"  { class: v10 }
-  x20: "VLAN 20 · iot       · 192.168.20.0/24"  { class: v20 }
-  x30: "VLAN 30 · guest     · 192.168.30.0/24"  { class: v30 }
-  x40: "VLAN 40 · monitoring· 192.168.40.0/24"  { class: v40 }
-  xt:  "trunk (multiple VLANs)"                  { class: trunk }
+  x1:  "VLAN 1  · native/LAN · 192.168.1.0/24    (live)"     { class: v1 }
+  x20: "VLAN 20 · iot        · 192.168.20.0/24   (live)"     { class: v20 }
+  x50: "VLAN 50 · services   · 192.168.50.0/24   (live)"     { class: v50 }
+  x10: "VLAN 10 · trusted    · 192.168.10.0/24   (proposed)" { class: v10 }
+  x30: "VLAN 30 · guest      · 192.168.30.0/24   (proposed)" { class: v30 }
+  x40: "VLAN 40 · monitoring · 192.168.40.0/24   (proposed)" { class: v40 }
+  xt:  "trunk (multiple VLANs)"                              { class: trunk }
 }

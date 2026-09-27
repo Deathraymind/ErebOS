@@ -22,5 +22,6 @@ in {
     pkgs.ryubing
     pkgs.teleport_18
     pkgs.discord
+    pkgs.ansible
   ];
 }

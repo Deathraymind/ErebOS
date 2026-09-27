@@ -118,7 +118,7 @@
   networking.firewall.allowedTCPPorts = [8443];
 
   # Handy to have the disk tooling around for the qcow2 import step.
-  environment.systemPackages = with pkgs; [qemu-utils];
+  environment.systemPackages = with pkgs; [qemu-utils python3];
 
   system.stateVersion = "26.05";
 }

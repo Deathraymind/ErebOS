@@ -6,6 +6,8 @@
   inputs,
   ...
 }: {
+  programs.steam.remotePlay.openFirewall = true;
+
   # Enable libvirtd daemon
   virtualisation.libvirtd.enable = true;
   #  services.expressvpn.enable = true;

@@ -13,5 +13,6 @@
     # ./ollama.nix
     ./screenshot.nix
     ./display-settings.nix
+    ./questlink.nix
   ];
 }
