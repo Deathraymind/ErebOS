@@ -20,14 +20,13 @@
         proto = "rsn";
         pairwise = "ccmp";
         group = "ccmp";
-        psk = "$QUESTLINK_PSK";
+        psk = "yourpassword"
       };
       ipv4.method = "shared";
       ipv6.method = "disabled";
     };
   };
 
-  sops.secrets."questlink-env" = {};
 
   networking.firewall.trustedInterfaces = ["wlp7s0"];
 }

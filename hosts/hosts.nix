@@ -126,7 +126,7 @@ in {
         net50 = {
           address = "192.168.50.11";
           prefixLength = 24;
-          allowedTCPPorts = [2022 8080];
+          allowedTCPPorts = [2022 8080 25570];
         };
       };
       vlans = {
