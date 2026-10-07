@@ -315,6 +315,7 @@
         ./hosts/workstations/desktop/configuration.nix
         ./modules/erebos/system/default.nix
         ./modules/erebos/programs/defaultPrograms.nix
+        ./modules/erebos/programs/pentest.nix
         inputs.home-manager.nixosModules.default
         inputs.stylix.nixosModules.stylix
         chaotic.nixosModules.default
