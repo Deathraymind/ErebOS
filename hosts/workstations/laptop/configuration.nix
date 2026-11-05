@@ -27,7 +27,20 @@ in {
   # for ollamprograms.adb.enable = true;a
 
   systemd.services.NetworkManager-wait-online.enable = false;
-
+  services.power-profiles-daemon.enable = false; # must be off: it conflicts with TLP
+  services.thermald.enable = true; # Intel thermal management, plays fine with TLP
+  services.tlp = {
+    enable = true;
+    settings = {
+      CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+      CPU_ENERGY_PERF_POLICY_ON_BAT = "power"; # the big one: stops turbo spikes
+      CPU_BOOST_ON_BAT = 0; # optional: no turbo at all on battery
+      PLATFORM_PROFILE_ON_BAT = "low-power";
+      PCIE_ASPM_ON_BAT = "powersupersave";
+      RUNTIME_PM_ON_BAT = "auto";
+      WIFI_PWR_ON_BAT = "on";
+    };
+  };
   # Kill that xrdb error once and for all
   # We still enable the module so Nix knows how to handle the manual/docs
   # but we don't need to define 'settings' if you just want the fork's defaults.
