@@ -163,17 +163,17 @@ in {
   vaultwarden =
     defaults
     // {
-      hostname = "homeassistant";
+      hostname = "vaultwarden";
       interfaces = {
         enp5s0 = {
           address = "192.168.1.54";
           prefixLength = 24;
           allowedTCPPorts = []; # ssh, LAN only
         }; # native VLAN, untagged
-        net20 = {
+        net50 = {
           address = "192.168.50.12";
           prefixLength = 24;
-          allowedTCPPorts = [8443];
+          allowedTCPPorts = [8443 80 443];
         }; # tagged VLAN 20
       };
       vlans = {

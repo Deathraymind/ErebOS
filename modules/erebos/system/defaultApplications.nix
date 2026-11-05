@@ -37,6 +37,7 @@
   };
   services.flatpak.enable = true;
   nixpkgs.config.allowUnfree = true;
+  programs.wireshark.enable = true;
   ### 2. The Logic
   environment.systemPackages = [
     # pkgs.expressvpn
@@ -52,6 +53,7 @@
     pkgs.vesktop
     pkgs.vscode
     pkgs.mpvpaper
+    pkgs.wireshark
   ];
   nixpkgs.config.allowUnfreePredicate = pkg:
     builtins.elem (lib.getName pkg) [

@@ -36,7 +36,7 @@
 
   # --- SYSTEM NETWORKING & STORAGE ---
   networking.firewall = {
-    allowedTCPPorts = [80];
+    allowedTCPPorts = [];
     allowedUDPPorts = [];
   };
 }

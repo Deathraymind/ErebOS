@@ -89,7 +89,7 @@ in {
     shell = pkgs.zsh;
     hashedPassword = "$y$j9T$Yu6LVySFa46PsKBHC7lkI.$fCdSJMULL1L2uOMhiY1WlR5QzW84qP42ktl2CxvSkgC";
     isNormalUser = true;
-    extraGroups = ["dialout" "networkmanager" "wheel" "libvirtd" "vboxusers" "disk" "kvm" "video" "render" "docker" "adbusers" "ydotool" "uinput" "amdgpu"];
+    extraGroups = ["dialout" "networkmanager" "wheel" "libvirtd" "vboxusers" "disk" "kvm" "video" "render" "docker" "adbusers" "ydotool" "uinput" "amdgpu" "wireshark"];
 
     packages = with pkgs; [
     ];
